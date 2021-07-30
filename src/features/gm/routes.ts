@@ -47,7 +47,7 @@ const routes: RouteConfig[] = [
       },
       {
         path: 'characters/edit/:id',
-        name: 'gm-character-edit',
+        name: 'gm-characters-edit',
         component: CharacterEditor,
         props: true,
       },
@@ -58,7 +58,7 @@ const routes: RouteConfig[] = [
       },
       {
         path: 'locations/edit/:id',
-        name: 'gm-location-edit',
+        name: 'gm-locations-edit',
         component: LocationsEditor,
         props: true,
       },

@@ -9,6 +9,11 @@ interface ISectionData {
   body: string
 }
 
+interface IRelationshipData {
+  name: string,
+  relationship: string
+}
+
 interface ICollectionItemData {
   id?: string
   name?: string
@@ -16,10 +21,11 @@ interface ICollectionItemData {
   notes?: string
   image?: string
   sections?: ISectionData[]
-  campaigns?: string[]
-  locations?: string[]
-  factions?: string[]
-  npcs?: string[]
+  characters?: IRelationshipData[]
+  campaigns?: IRelationshipData[]
+  locations?: IRelationshipData[]
+  factions?: IRelationshipData[]
+  npcs?: IRelationshipData[]
   labels?: string[]
   clocks?: IClockData[]
   tables?: IRollableTableData[]
@@ -32,10 +38,11 @@ abstract class CollectionItem {
   public Description: string
   public Notes: string
   public Sections: ISectionData[]
-  public Campaigns: string[]
-  public Locations: string[]
-  public Factions: string[]
-  public NPCs: string[]
+  public Characters: IRelationshipData[]
+  public Campaigns: IRelationshipData[]
+  public Locations: IRelationshipData[]
+  public Factions: IRelationshipData[]
+  public NPCs: IRelationshipData[]
   public Labels: string[]
   public Clocks: Clock[]
   public Tables: RollableTable[]
@@ -48,6 +55,7 @@ abstract class CollectionItem {
     this.Description = data?.description || ''
     this.Notes = data?.notes || ''
     this.Sections = data?.sections || []
+    this.Characters = data?.characters || []
     this.Campaigns = data?.campaigns || []
     this.Locations = data?.locations || []
     this.Factions = data?.factions || []
@@ -68,6 +76,48 @@ abstract class CollectionItem {
 
   public set Image(src: string) {
     this.img = src
+  }
+
+  public AddSection(s: ISectionData) {
+    this.Sections.push(s)
+  }
+
+  public DeleteSection(s: ISectionData) {
+    const idx = this.Sections.findIndex(x => x.body === s.body && x.header === s.header)
+    if (idx === -1) return
+    this.Sections.splice(idx, 1)
+  }
+
+  public AddClock(c?: IClockData) {
+    this.Clocks.push(new Clock(c ? c : { title: 'New Clock' }))
+  }
+
+  public DeleteClock(c: Clock) {
+    const idx = this.Clocks.findIndex(x => x.ID === c.ID)
+    if (idx === -1) return
+    this.Clocks.splice(idx, 1)
+  }
+
+  public AddTable(t?: IRollableTableData) {
+    this.Tables.push(new RollableTable(t ? t : { title: 'New Table' }))
+  }
+
+  public DeleteTable(t: RollableTable) {
+    const idx = this.Tables.findIndex(x => x.ID === t.ID)
+    if (idx === -1) return
+    this.Tables.splice(idx, 1)
+  }
+
+  public AddRelationship(type: string, r: IRelationshipData) {
+    if (!Array.isArray(this[type])) return
+    this[type].push(r)
+  }
+
+  public DeleteRelationship(type: string, r: IRelationshipData) {
+    if (!Array.isArray(this[type])) return
+    const idx = this[type].findIndex(x => r.name === x.name && r.relationship === x.relationship)
+    if (idx === -1) return
+    this[type].splice(idx, 1)
   }
 }
 

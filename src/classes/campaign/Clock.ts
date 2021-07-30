@@ -1,12 +1,13 @@
 import uuid from 'uuid/v4'
 
 interface IClockData {
-  id: string,
-  title: string,
-  description: string,
-  resolution: string
-  segments: number,
-  progress: number,
+  id?: string,
+  title?: string,
+  description?: string,
+  resolution?: string
+  segments?: number,
+  progress?: number,
+  linear?: boolean,
 }
 
 class Clock {
@@ -14,16 +15,28 @@ class Clock {
   public Title: string
   public Description: string
   public Resolution: string
-  public Segments: number
+  private segments: number
   public Progress: number
+  public Linear: boolean
 
-  public constructor(data: IClockData) {
+  public constructor(data?: IClockData) {
     this.ID = data?.id || uuid()
-    this.Segments = data?.segments || 6
+    this.segments = data?.segments || 6
     this.Progress = data?.progress || 0
-    this.Title = data?.title || ''
+    this.Title = data?.title || 'New Clock'
     this.Description = data?.description || ''
     this.Resolution = data?.resolution || ''
+    this.Linear = data.linear
+  }
+
+  public get Segments(): number {
+    return this.segments
+  }
+
+  public set Segments(val: string | number) {
+    if (isNaN(parseInt(val.toString()))) return
+    const n = parseInt(val.toString())
+    this.segments = n < 0 ? 0 : n
   }
 
   public Increment() {
@@ -31,7 +44,7 @@ class Clock {
   }
 
   public Decrement() {
-    if (this.Progress > this.Segments) this.Progress--
+    if (this.Progress > 0) this.Progress--
   }
 
   public static Serialize(c: Clock): IClockData {

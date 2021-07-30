@@ -50,7 +50,7 @@ export default Vue.extend({
   methods: {
     mountFaction() {
       if (this.id === 'new') this.faction = new Faction()
-      else this.faction = this.$store.getters['factions/getFactions'].find(x => x.ID === this.id)
+      else this.faction = this.$store.getters['faction/getFactions'].find(x => x.ID === this.id)
     },
   },
 })

@@ -7,16 +7,19 @@ import { store } from '@/store'
 interface ICharacterData extends ICollectionItemData {
   alias: string
   title: string
+  pronouns: string
 }
 
 class Character extends CollectionItem {
   public Alias: string
   public Title: string
+  public Pronouns: string
 
   public constructor(data?: ICharacterData) {
     super(data)
     this.Alias = data?.alias || ''
     this.Title = data?.title || ''
+    this.Pronouns = data?.pronouns || ''
     this.ItemType = ItemType.Character
   }
 
@@ -45,6 +48,7 @@ class Character extends CollectionItem {
       id: c.ID,
       alias: c.Alias,
       title: c.Title,
+      pronouns: c.Pronouns,
       name: c.Name,
       description: c.Description,
       notes: c.Notes,

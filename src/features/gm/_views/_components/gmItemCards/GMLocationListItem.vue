@@ -19,11 +19,13 @@
             <v-btn
               v-for="(loc, i) in item.Locations"
               small
-              text
-              :key="`${loc.Name}_${i}`"
+              outlined
+              :key="`${loc.name}_${i}`"
               class="mr-2"
+              :disabled="!isLink(loc.name)"
+              @click.stop="goTo(loc.name)"
             >
-              {{ loc.Name }}
+              {{ loc.name }}
             </v-btn>
           </v-col>
           <v-col cols="auto">
@@ -52,6 +54,23 @@ export default Vue.extend({
   props: {
     item: { type: Object, required: true },
     big: { type: Boolean },
+  },
+  computed: {
+    allLocations() {
+      if (!this.$store.getters['location/getLocations']) return []
+      return this.$store.getters['location/getLocations'].filter(x => x.Name !== this.item.Name)
+    },
+  },
+  methods: {
+    isLink(name) {
+      return this.allLocations.some(x => x.Name === name)
+    },
+    goTo(name) {
+      const e = this.allLocations.find(x => x.Name === name)
+      if (!e) return
+      this.item.save()
+      this.$router.push({ name: `gm-locations-edit`, params: { id: e.ID } })
+    },
   },
 })
 </script>
