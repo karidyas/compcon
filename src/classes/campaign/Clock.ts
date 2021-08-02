@@ -33,17 +33,16 @@ class Clock {
     return this.segments
   }
 
-  public set Segments(val: string | number) {
-    if (isNaN(parseInt(val.toString()))) return
-    const n = parseInt(val.toString())
-    this.segments = n < 0 ? 0 : n
+  public set Segments(val: number) {
+    if (isNaN(val)) return
+    this.segments = val < 0 ? 0 : val
   }
 
-  public Increment() {
+  public Increment(): void {
     if (this.Progress < this.Segments) this.Progress++
   }
 
-  public Decrement() {
+  public Decrement(): void {
     if (this.Progress > 0) this.Progress--
   }
 
