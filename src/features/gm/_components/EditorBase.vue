@@ -91,7 +91,7 @@
               :close-on-content-click="false"
             >
               <template v-slot:activator="{ on }">
-                <v-btn color="primary" outlined small v-on="on">
+                <v-btn color="accent" outlined small v-on="on">
                   <v-icon left>mdi-plus</v-icon>
                   Add New Section
                 </v-btn>
@@ -122,7 +122,7 @@
               v-for="(c, i) in item.Characters"
               :key="`assc_char_${i}`"
               :relationship="c"
-              itemType="Character"
+              item-type="Character"
               :items="allCharacters"
               class="mb-1"
               @delete="deleteAssociation('Characters', c)"
@@ -148,9 +148,9 @@
               small
               block
               outlined
-              color="primary"
-              @click="addAssociation('Characters')"
+              color="accent"
               class="mt-2 mx-1"
+              @click="addAssociation('Characters')"
             >
               <v-icon left>mdi-plus</v-icon>
               Add New
@@ -163,7 +163,7 @@
               v-for="(c, i) in item.Locations"
               :key="`assc_loc_${i}`"
               :relationship="c"
-              itemType="Location"
+              item-type="Location"
               :items="allLocations"
               class="mb-1"
               @delete="deleteAssociation('Locations', c)"
@@ -189,9 +189,9 @@
               small
               block
               outlined
-              color="primary"
-              @click="addAssociation('Locations')"
+              color="accent"
               class="mt-2 mx-1"
+              @click="addAssociation('Locations')"
             >
               <v-icon left>mdi-plus</v-icon>
               Add New
@@ -204,7 +204,7 @@
               v-for="(c, i) in item.Factions"
               :key="`assc_fact_${i}`"
               :relationship="c"
-              itemType="Faction"
+              item-type="Faction"
               :items="allFactions"
               class="mb-1"
               @delete="deleteAssociation('Factions', c)"
@@ -230,9 +230,9 @@
               small
               block
               outlined
-              color="primary"
-              @click="addAssociation('Factions')"
+              color="accent"
               class="mt-2 mx-1"
+              @click="addAssociation('Factions')"
             >
               <v-icon left>mdi-plus</v-icon>
               Add New
@@ -250,7 +250,7 @@
         />
         <v-row justify="end">
           <v-col cols="auto">
-            <v-btn color="primary" outlined small @click="item.AddClock()">
+            <v-btn color="accent" outlined small @click="item.AddClock()">
               <v-icon left>mdi-plus</v-icon>
               Add New Clock
             </v-btn>
@@ -267,7 +267,7 @@
         />
         <v-row justify="end">
           <v-col cols="auto">
-            <v-btn color="primary" outlined small @click="item.AddTable()">
+            <v-btn color="accent" outlined small @click="item.AddTable()">
               <v-icon left>mdi-plus</v-icon>
               Add New Table
             </v-btn>
@@ -333,11 +333,10 @@ import {
   History,
 } from 'tiptap-vuetify'
 import RenderBase from './RenderBase.vue'
-import CCRelationshipItem from '@/ui/components/CCRelationshipItem.vue'
 
 export default Vue.extend({
   name: 'gm-editor-base',
-  components: { TiptapVuetify, RenderBase, CCRelationshipItem },
+  components: { TiptapVuetify, RenderBase },
   props: {
     new: { type: Boolean },
     item: { type: Object, required: true },
