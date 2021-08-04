@@ -60,12 +60,7 @@
         </v-chip>
       </template>
       <template v-slot:[`item.ItemType`]="{ item }">
-        <v-btn
-          small
-          color="primary"
-          class="white--text"
-          :to="`${itemType.toLowerCase()}s/edit/${item.ID}`"
-        >
+        <v-btn small color="primary" class="white--text" @click="$emit('open', item.ID)">
           <v-icon left>mdi-open-in-new</v-icon>
           Open
         </v-btn>

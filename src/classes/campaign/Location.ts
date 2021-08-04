@@ -42,7 +42,6 @@ class Location extends CollectionItem {
       notes: l.Notes,
       image: l.img,
       sections: l.Sections,
-      campaigns: l.Campaigns,
       locations: l.Locations,
       factions: l.Factions,
       npcs: l.NPCs,

@@ -47,7 +47,7 @@
     </div>
     <v-row justify="center" align="center">
       <v-col cols="8">
-        <v-btn color="primary" block large>
+        <v-btn color="primary" class="white--text" block large to="campaigns/edit">
           <v-icon left v-html="'mdi-plus'" />
           Create New Campaign
         </v-btn>

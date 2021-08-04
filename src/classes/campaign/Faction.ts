@@ -5,7 +5,7 @@ import { CollectionItem, ICollectionItemData } from "./CollectionItem"
 import { RollableTable } from "./RollableTable"
 
 interface IFactionData extends ICollectionItemData {
-  core_mission: string[]
+  core_mission?: string[]
 }
 
 class Faction extends CollectionItem {
@@ -46,7 +46,6 @@ class Faction extends CollectionItem {
       notes: f.Notes,
       image: f.img,
       sections: f.Sections,
-      campaigns: f.Campaigns,
       locations: f.Locations,
       factions: f.Factions,
       npcs: f.NPCs,

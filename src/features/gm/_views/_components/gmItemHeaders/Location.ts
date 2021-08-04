@@ -6,11 +6,6 @@ export default [
     groupable: false,
   },
   {
-    text: 'Campaigns',
-    value: 'Campaigns',
-    groupable: false,
-  },
-  {
     text: 'Labels',
     value: 'Labels',
     groupable: false,

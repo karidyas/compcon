@@ -6,7 +6,7 @@
           <v-col cols="auto">
             <span class="heading h2">{{ title }}</span>
           </v-col>
-          <v-col cols="4" class="pl-4">
+          <v-col class="pl-4">
             <v-autocomplete
               v-model="search"
               :placeholder="`Search ${title}`"
@@ -18,7 +18,7 @@
               clearable
             />
           </v-col>
-          <v-col cols="3" class="ml-auto">
+          <v-col cols="2" class="ml-auto">
             <v-select
               v-model="grouping"
               :items="['None', 'Campaigns', 'Labels']"
@@ -28,7 +28,7 @@
               dense
             />
           </v-col>
-          <v-col cols="3">
+          <v-col cols="2">
             <v-select
               v-model="sorting"
               :items="['Name']"
@@ -37,6 +37,25 @@
               outlined
               dense
             />
+          </v-col>
+          <v-col cols="auto">
+            <v-menu left bottom offset-x offset-y :close-on-content-click="false" max-width="40vw">
+              <template v-slot:activator="{ on }">
+                <v-btn fab small dark color="primary" v-on="on">
+                  <v-icon>mdi-filter</v-icon>
+                </v-btn>
+              </template>
+              <v-card>
+                <v-toolbar dense class="heading h4">
+                  Labels
+                </v-toolbar>
+                <v-card-text>
+                  <v-btn-toggle multiple>
+                    <v-btn v-for="(l, i) in allLabels" :key="`label_toggle_${i}`">{{ l }}</v-btn>
+                  </v-btn-toggle>
+                </v-card-text>
+              </v-card>
+            </v-menu>
           </v-col>
         </v-row>
       </v-toolbar>
@@ -67,6 +86,7 @@
           :table="view === 'table'"
           :grouping="grouping"
           :sorting="sorting"
+          @open="$emit('open', $event)"
         />
       </v-card-text>
     </v-card>
@@ -88,6 +108,7 @@
 </template>
 
 <script lang="ts">
+import _ from 'lodash'
 import Vue from 'vue'
 import ItemCardGrid from '../_views/ItemCardGrid.vue'
 
@@ -99,17 +120,32 @@ export default Vue.extend({
     itemType: { type: String, required: true },
     title: { type: String, required: true },
   },
-  computed: {
-    searchedItems() {
-      if (!this.search) return this.items
-      return this.items.filter(x => x.Name.includes(this.search))
-    },
-  },
   data: () => ({
     search: '',
     view: 'big-grid',
     sorting: 'Name',
     grouping: 'None',
+    hiddenLabels: [],
+    hiddenCampaigns: [],
   }),
+  computed: {
+    searchedItems() {
+      // let i = this.items
+      // if (this.hiddenLabels.length)
+      //   i = i.filter(x => !x.Labels.some(y => this.hiddenLabels.includes(y)))
+      // if (this.hiddenCampaigns.length)
+      //   i = i.filter(x => !x.Campaigns.some(y => this.hiddenCampaigns.includes(y)))
+      // if (!this.search) return i
+      // return i.filter(x => x.Name.includes(this.search))
+      if (!this.search) return this.items
+      return this.items.filter(x => x.Name.includes(this.search))
+    },
+    visibleLabels() {
+      return this.allLabels.filter(x => !this.hiddenLabels.includes(x))
+    },
+    allLabels() {
+      return _.uniq(this.items.flatMap(x => x.Labels))
+    },
+  },
 })
 </script>

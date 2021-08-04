@@ -18,6 +18,7 @@ class Clock {
   private segments: number
   public Progress: number
   public Linear: boolean
+  public ItemType: string = 'Clock'
 
   public constructor(data?: IClockData) {
     this.ID = data?.id || uuid()

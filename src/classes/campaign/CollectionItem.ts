@@ -22,7 +22,6 @@ interface ICollectionItemData {
   image?: string
   sections?: ISectionData[]
   characters?: IRelationshipData[]
-  campaigns?: IRelationshipData[]
   locations?: IRelationshipData[]
   factions?: IRelationshipData[]
   npcs?: IRelationshipData[]
@@ -39,7 +38,6 @@ abstract class CollectionItem {
   public Notes: string
   public Sections: ISectionData[]
   public Characters: IRelationshipData[]
-  public Campaigns: IRelationshipData[]
   public Locations: IRelationshipData[]
   public Factions: IRelationshipData[]
   public NPCs: IRelationshipData[]
@@ -56,7 +54,6 @@ abstract class CollectionItem {
     this.Notes = data?.notes || ''
     this.Sections = data?.sections || []
     this.Characters = data?.characters || []
-    this.Campaigns = data?.campaigns || []
     this.Locations = data?.locations || []
     this.Factions = data?.factions || []
     this.NPCs = data?.npcs || []

@@ -68,7 +68,7 @@
         </v-col>
       </v-row>
       <v-divider class="my-2" />
-      <div class="caption">{{ typeText }} CLOCKS</div>
+      <div v-if="item.Clocks.length" class="caption">{{ typeText }} CLOCKS</div>
       <cc-clock
         v-for="(c, i) in item.Clocks"
         :key="`${item.Name}_clock_${i}`"

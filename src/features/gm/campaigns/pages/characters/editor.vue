@@ -1,5 +1,5 @@
 <template>
-  <editor-base :item="character" :new="id === 'new'" @exit="$router.push('/gm/characters')">
+  <editor-base :item="character" @exit="$emit('close')">
     <v-row dense align="center">
       <v-col cols="auto">
         <v-btn icon color="secondary" class="fadeSelect" @click="randomName()">
@@ -77,27 +77,15 @@
 </template>
 
 <script lang="ts">
-import { Character } from '@/classes/campaign/Character'
 import { name, callsign } from '@/io/Generators'
 import Vue from 'vue'
-import EditorBase from '../_components/EditorBase.vue'
+import EditorBase from '../../../_components/EditorBase.vue'
 
 export default Vue.extend({
   name: 'character-editor',
   components: { EditorBase },
   props: {
-    id: { type: String, required: true },
-  },
-  data: () => ({
-    character: null,
-  }),
-  created() {
-    this.mountCharacter()
-  },
-  watch: {
-    id() {
-      this.mountCharacter()
-    },
+    character: { type: Object, required: true },
   },
   methods: {
     randomAlias() {
@@ -105,11 +93,6 @@ export default Vue.extend({
     },
     async randomName() {
       this.character.Name = await name()
-    },
-    mountCharacter() {
-      if (this.id === 'new') this.character = new Character()
-      else
-        this.character = this.$store.getters['character/getCharacters'].find(x => x.ID === this.id)
     },
   },
 })

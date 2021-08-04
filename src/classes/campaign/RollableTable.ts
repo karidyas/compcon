@@ -22,6 +22,7 @@ class RollableTable {
   public Die: number
   public Mult: number
   public Results: ITableRoll[]
+  public ItemType: string = 'RollableTable'
 
   public constructor(data?: IRollableTableData) {
     this.ID = data.id || uuid()

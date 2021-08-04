@@ -54,7 +54,7 @@
             </v-menu>
           </v-col>
           <v-col cols="auto">
-            <v-menu offset-x left>
+            <v-menu v-if="!noDelete" offset-x left>
               <template v-slot:activator="{ on }">
                 <v-btn small icon color="error" class="fadeSelect" v-on="on">
                   <v-icon>mdi-delete</v-icon>
@@ -113,6 +113,7 @@ export default Vue.extend({
     table: { type: Object, required: true },
     color: { type: String, required: false, default: 'primary' },
     print: { type: Boolean },
+    noDelete: { type: Boolean },
   },
   data: () => ({
     editDialog: false,

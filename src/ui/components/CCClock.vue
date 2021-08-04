@@ -2,57 +2,62 @@
   <v-card flat outlined>
     <v-card-text class="py-1 px-2 ma-0">
       <v-row v-if="clock.Linear" dense align="center">
-        <v-col cols="12" class="heading h3 text-center">
-          {{ clock.Title }}
-          <span v-if="!print">
-            <v-btn small icon class="fadeSelect" @click="editDialog = true">
-              <v-icon>mdi-circle-edit-outline</v-icon>
-            </v-btn>
-            <v-menu offset-x left>
-              <template v-slot:activator="{ on }">
-                <v-btn small icon color="error" class="fadeSelect" v-on="on">
-                  <v-icon>mdi-delete</v-icon>
+        <v-col>
+          <v-row dense>
+            <v-col cols="12" class="heading h3 text-center">
+              {{ clock.Title }}
+              <span v-if="!print">
+                <v-btn small icon class="fadeSelect" @click="editDialog = true">
+                  <v-icon>mdi-circle-edit-outline</v-icon>
                 </v-btn>
-              </template>
-              <v-card>
-                <v-card-text>
-                  Do you want to delete this clock? This action cannot be undone.
-                </v-card-text>
-                <v-divider />
-                <v-card-actions>
-                  <v-spacer />
-                  <v-btn small color="error" @click="$emit('delete')">
-                    Confirm Deletion
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-menu>
-          </span>
-        </v-col>
-        <v-col cols="12">
-          <v-progress-linear
-            background-color="grey lighten-2"
-            :height="size / 2.5"
-            :value="total"
-            :color="color"
-          >
-            <div class="background accent--text" style="border-radius: 2px">
-              <b v-if="print">&emsp; / {{ clock.Segments }}&nbsp;</b>
-              <b v-else>&nbsp;{{ progress }} / {{ clock.Segments }}&nbsp;</b>
-            </div>
-          </v-progress-linear>
+                <v-menu v-if="!noDelete" offset-x left>
+                  <template v-slot:activator="{ on }">
+                    <v-btn small icon color="error" class="fadeSelect" v-on="on">
+                      <v-icon>mdi-delete</v-icon>
+                    </v-btn>
+                  </template>
+                  <v-card>
+                    <v-card-text>
+                      Do you want to delete this clock? This action cannot be undone.
+                    </v-card-text>
+                    <v-divider />
+                    <v-card-actions>
+                      <v-spacer />
+                      <v-btn small color="error" @click="$emit('delete')">
+                        Confirm Deletion
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-menu>
+              </span>
+            </v-col>
+            <v-col cols="12">
+              <v-progress-linear
+                background-color="grey lighten-2"
+                :height="size / 2.5"
+                :value="total"
+                :color="color"
+              >
+                <div class="background accent--text" style="border-radius: 2px">
+                  <b v-if="print">&emsp; / {{ clock.Segments }}&nbsp;</b>
+                  <b v-else>&nbsp;{{ progress }} / {{ clock.Segments }}&nbsp;</b>
+                </div>
+              </v-progress-linear>
+            </v-col>
+
+            <v-col>
+              <div v-if="clock.Description">
+                <div class="overline mb-n1">DESCRIPTION</div>
+                <div class="ml-2" v-html-safe="clock.Description" />
+              </div>
+              <div v-if="clock.Resolution">
+                <div class="overline mb-n1">RESOLUTION</div>
+                <div class="ml-2" v-html-safe="clock.Resolution" />
+              </div>
+            </v-col>
+          </v-row>
         </v-col>
 
-        <v-col>
-          <div v-if="clock.Description">
-            <div class="overline mb-n1">DESCRIPTION</div>
-            <div class="ml-2" v-html-safe="clock.Description" />
-          </div>
-          <div v-if="clock.Resolution">
-            <div class="overline mb-n1">RESOLUTION</div>
-            <div class="ml-2" v-html-safe="clock.Resolution" />
-          </div>
-        </v-col>
         <v-col v-if="!print" cols="auto">
           <v-btn icon @click="clock.Increment()">
             <v-icon large color="accent">cci-accuracy</v-icon>
@@ -188,6 +193,7 @@ export default Vue.extend({
     clock: { type: Object, required: true },
     color: { type: String, required: false, default: 'primary' },
     print: { type: Boolean },
+    noDelete: { type: Boolean },
   },
   data: () => ({
     editDialog: false,

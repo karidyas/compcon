@@ -1,7 +1,21 @@
 <template>
   <div>
-    <component v-if="list" :is="listComponent" :item="item" :big="big" :list="list" />
-    <component v-else :is="cardComponent" :item="item" :big="big" :list="list" />
+    <component
+      v-if="list"
+      :is="listComponent"
+      :item="item"
+      :big="big"
+      :list="list"
+      @open="$emit('open')"
+    />
+    <component
+      v-else
+      :is="cardComponent"
+      :item="item"
+      :big="big"
+      :list="list"
+      @open="$emit('open')"
+    />
   </div>
 </template>
 

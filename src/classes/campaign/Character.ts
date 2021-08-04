@@ -5,9 +5,9 @@ import { RollableTable } from "./RollableTable"
 import { store } from '@/store'
 
 interface ICharacterData extends ICollectionItemData {
-  alias: string
-  title: string
-  pronouns: string
+  alias?: string
+  title?: string
+  pronouns?: string
 }
 
 class Character extends CollectionItem {
@@ -54,7 +54,6 @@ class Character extends CollectionItem {
       notes: c.Notes,
       image: c.img,
       sections: c.Sections,
-      campaigns: c.Campaigns,
       locations: c.Locations,
       factions: c.Factions,
       npcs: c.NPCs,
