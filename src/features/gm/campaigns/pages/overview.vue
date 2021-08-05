@@ -26,12 +26,13 @@
     </v-row>
     <v-row justify="center">
       <v-col cols="5">
-        <v-text-field outlined hide-details dense label="Author(s)" />
+        <v-text-field v-model="item.Author" outlined hide-details dense label="Author(s)" />
       </v-col>
     </v-row>
     <v-row>
       <v-col>
         <v-textarea
+          v-model="item.Description"
           outlined
           auto-grow
           rows="3"
@@ -39,8 +40,17 @@
           hide-details
           class="my-3"
         />
-        <v-textarea outlined auto-grow rows="3" label="Contributors" hide-details class="my-3" />
         <v-textarea
+          v-model="item.Contributors"
+          outlined
+          auto-grow
+          rows="3"
+          label="Contributors"
+          hide-details
+          class="my-3"
+        />
+        <v-textarea
+          v-model="item.License"
           outlined
           auto-grow
           rows="3"

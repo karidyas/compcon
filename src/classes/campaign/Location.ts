@@ -1,4 +1,3 @@
-import { store } from "@/store"
 import { ItemType } from "../enums"
 import { Clock } from "./Clock"
 import { CollectionItem, ICollectionItemData } from "./CollectionItem"
@@ -16,22 +15,6 @@ class Location extends CollectionItem {
 
   public get SectionSuggestions(): string[] {
     return ['History', 'Climate', 'Geography', 'Flora and Fauna', 'Resources']
-  }
-
-  public save() {
-    store.dispatch('location/saveLocationData')
-  }
-
-  public copy() {
-    store.dispatch('location/cloneLocation', this)
-  }
-
-  public delete() {
-    store.dispatch('location/deleteLocation', this)
-  }
-
-  public addNew() {
-    store.dispatch('location/addLocation', this)
   }
 
   public static Serialize(l: Location): ILocationData {

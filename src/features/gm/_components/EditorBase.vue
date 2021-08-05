@@ -409,8 +409,7 @@ export default Vue.extend({
       this.$emit('exit')
     },
     saveExit() {
-      if (this.new) this.item.addNew()
-      else this.item.save()
+      this.$store.dispatch('campaign/saveCampaignData')
       this.$emit('exit')
     },
     isLink(type, name) {

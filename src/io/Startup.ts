@@ -36,9 +36,7 @@ export default async function (lancerVer: string, ccVer: string, store: any): Pr
   await encounterStore.loadEncounters()
   await missionStore.loadMissions()
   await missionStore.loadActiveMissions()
-  await store.dispatch('character/loadCharacters')
-  await store.dispatch('location/loadLocations')
-  await store.dispatch('faction/loadFactions')
+  await store.dispatch('campaign/loadCampaigns')
 
 
   console.info('loading complete')

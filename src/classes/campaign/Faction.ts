@@ -1,4 +1,3 @@
-import { store } from "@/store"
 import { ItemType } from "../enums"
 import { Clock } from "./Clock"
 import { CollectionItem, ICollectionItemData } from "./CollectionItem"
@@ -19,22 +18,6 @@ class Faction extends CollectionItem {
 
   public get SectionSuggestions(): string[] {
     return ['History', 'Goals']
-  }
-
-  public save() {
-    store.dispatch('faction/saveFactionData')
-  }
-
-  public copy() {
-    store.dispatch('faction/cloneFaction', this)
-  }
-
-  public delete() {
-    store.dispatch('faction/deleteFaction', this)
-  }
-
-  public addNew() {
-    store.dispatch('faction/addFaction', this)
   }
 
   public static Serialize(f: Faction): IFactionData {

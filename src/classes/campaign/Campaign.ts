@@ -3,12 +3,19 @@ import { ISectionData, Section } from './campaign_elements/Section'
 import { Character, ICharacterData } from './Character'
 import { Faction, IFactionData } from './Faction'
 import { ILocationData, Location } from './Location'
+import { store } from '@/store'
+
+enum CampaignStatus {
+  Active = "Active",
+  Unpublished = "Unpublished",
+  Catalog = "Catalog"
+}
 
 interface ICampaignData {
   id?: string
   name?: string
   image?: string
-  authors?: string
+  author?: string
   description?: string
   contributors?: string
   license?: string
@@ -16,13 +23,14 @@ interface ICampaignData {
   characters: ICharacterData[]
   factions: IFactionData[]
   locations: ILocationData[]
+  status?: CampaignStatus
 }
 
 class Campaign {
   public readonly ID: string
   public Name: string
   public Image: string
-  public Authors: string
+  public Author: string
   public Description: string
   public Contributors: string
   public License: string
@@ -30,12 +38,13 @@ class Campaign {
   public Characters: Character[]
   public Locations: Location[]
   public Factions: Faction[]
+  public Status: CampaignStatus
 
   constructor(data?: ICampaignData) {
     this.ID = data.id || uuid()
     this.Name = data.name || 'New Campaign'
     this.Image = data.image || ''
-    this.Authors = data.authors || ''
+    this.Author = data.author || ''
     this.Description = data.description || ''
     this.Contributors = data.contributors || ''
     this.License = data.license || ''
@@ -43,6 +52,27 @@ class Campaign {
     this.Characters = data.characters.map(c => Character.Deserialize(c))
     this.Locations = data.locations.map(l => Location.Deserialize(l))
     this.Factions = data.factions.map(f => Faction.Deserialize(f))
+    this.Status = data.status || CampaignStatus.Unpublished
+  }
+
+  public save() {
+    store.dispatch('campaign/saveCampaignData')
+  }
+
+  public load() {
+    store.dispatch('campaign/setEditCampaign', this)
+  }
+
+  public copy() {
+    store.dispatch('campaign/cloneCampaign', this)
+  }
+
+  public delete() {
+    store.dispatch('campaign/deleteCampaign', this)
+  }
+
+  public addNew() {
+    store.dispatch('campaign/addCampaign', this)
   }
 
   public AddSection() {
@@ -78,15 +108,23 @@ class Campaign {
     this.Locations.push(new Location({ name: 'New Location' }))
   }
 
+  public Count(type: string): number {
+    return this.Sections.flatMap(x => x.Children.map(y => y.ItemType === type)).length
+  }
+
   public static Serialize(c: Campaign): ICampaignData {
     return {
       id: c.ID,
       name: c.Name,
+      author: c.Author,
       description: c.Description,
+      contributors: c.Contributors,
+      license: c.License,
       sections: c.Sections.map(s => Section.Serialize(s)),
       characters: c.Characters.map(s => Character.Serialize(s)),
       locations: c.Locations.map(s => Location.Serialize(s)),
       factions: c.Factions.map(s => Faction.Serialize(s)),
+      status: c.Status
     }
   }
 
@@ -95,4 +133,4 @@ class Campaign {
   }
 }
 
-export { ICampaignData, Campaign }
+export { ICampaignData, Campaign, CampaignStatus }

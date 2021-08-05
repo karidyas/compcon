@@ -2,7 +2,6 @@ import { ItemType } from "../enums"
 import { Clock } from "./Clock"
 import { CollectionItem, ICollectionItemData } from "./CollectionItem"
 import { RollableTable } from "./RollableTable"
-import { store } from '@/store'
 
 interface ICharacterData extends ICollectionItemData {
   alias?: string
@@ -25,22 +24,6 @@ class Character extends CollectionItem {
 
   public get SectionSuggestions(): string[] {
     return ['History', 'Personality', 'Skills', 'Motivations', 'Resources']
-  }
-
-  public save() {
-    store.dispatch('character/saveCharacterData')
-  }
-
-  public copy() {
-    store.dispatch('character/cloneCharacter', this)
-  }
-
-  public delete() {
-    store.dispatch('character/deleteCharacter', this)
-  }
-
-  public addNew() {
-    store.dispatch('character/addCharacter', this)
   }
 
   public static Serialize(c: Character): ICharacterData {
