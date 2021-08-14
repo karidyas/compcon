@@ -10,6 +10,12 @@ interface ISubItemData {
   item_type: string
 }
 
+interface ILinkedContent {
+  item_id: string
+  options: string[]
+  item_type: string
+}
+
 abstract class SubItem {
   public readonly ID: string
   public Title: string
@@ -36,6 +42,10 @@ abstract class SubItem {
 
   public AddTable() {
     this.Content.push(new RollableTable({}))
+  }
+
+  public AddLink(item: ILinkedContent) {
+    this.Content.push(item)
   }
 
   public MoveItem(from: number, to: number) {

@@ -34,7 +34,10 @@
         <v-btn small block color="primary" @click="item.AddTable()">Add Rollable Table</v-btn>
       </v-col>
       <v-col>
-        <v-btn small block color="primary">Link Item</v-btn>
+        <v-btn small block color="primary" @click="linkSelectDialog = true">Link Item</v-btn>
+        <v-dialog v-model="linkSelectDialog">
+          <link-selector @add-link="item.AddLink($event)" @close="linkSelectDialog = false" />
+        </v-dialog>
       </v-col>
     </v-row>
     <slot />
@@ -90,18 +93,19 @@
 <script lang="ts">
 import Vue from 'vue'
 import PageContentContainer from './PageContentContainer.vue'
+import LinkSelector from './LinkSelector.vue'
 
 export default Vue.extend({
   name: 'campaign-editor-page',
-  components: { PageContentContainer },
+  components: { PageContentContainer, LinkSelector },
   props: {
     item: { type: Object, required: true },
   },
+  data: () => ({
+    linkSelectDialog: false,
+  }),
   methods: {
     moveUp(index) {
-      console.log(index)
-      console.log(this.item)
-      console.log(this.item.MoveItem())
       if (index > 0) {
         this.item.MoveItem(index, index - 1)
       }

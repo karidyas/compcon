@@ -17,7 +17,7 @@
         class="ml-auto pr-1"
         align-self="end"
       >
-        <i class="overline">({{ idn }})</i>
+        <i class="overline">{{ idn }}</i>
       </v-col>
     </v-row>
   </div>
