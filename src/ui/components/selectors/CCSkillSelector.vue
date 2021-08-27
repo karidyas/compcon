@@ -87,7 +87,6 @@
       </div>
       <add-custom-skill 
         :pilot="pilot"
-        :can-add="pilot.IsMissingSkills"
         @add-custom="pilot.AddCustomSkill($event)" />
     </template>
   </selector>
@@ -146,7 +145,7 @@ export default Vue.extend({
   },
   methods: {
     scroll(id) {
-      if (this.newPilot || this.levelUp)
+      if (this.levelUp)
         this.$vuetify.goTo(`#skill_${id}`, {
           duration: 150,
           easing: 'easeInOutQuad',

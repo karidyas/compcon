@@ -10,19 +10,19 @@
   />
   <svg
     v-else
+    :data-src="source.Logo + '#Content'"
     :style="
       `width:${iconSize}; height:${iconSize}; fill:${iconColor}; stroke:${stroke}; ${
         stroke ? 'stroke-width: 25px;' : ''
       }`
     "
   >
-    <use :href="source.Logo + '#Content'"></use>
   </svg>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-
+import "external-svg-loader"
 enum sizeMap {
   xSmall = '16px',
   small = '20px',

@@ -1,6 +1,6 @@
 <template>
-  <v-container px-5>
-    <div class="heading h1">MANUFACTURERS</div>
+  <v-container fluid px-5>
+    <h1  class="heading">FACTIONS</h1>
     <v-tabs
       v-model="tabModel"
       :vertical="$vuetify.breakpoint.lgAndUp"
@@ -10,18 +10,18 @@
       icons-and-text
       show-arrows
     >
-      <v-tab v-for="(m, i) in manufacturers" :key="m.ID" ripple>
-        <cc-logo size="large" :source="m" :color="tabModel == i ? 'white' : 'black'" />
-        {{ m.ID }}
+      <v-tab v-for="(f, i) in factions" :key="f.ID" ripple>
+        <cc-logo size="large" :source="f" :color="tabModel == i ? 'white' : 'black'" />
+        {{ f.ID }}
       </v-tab>
-      <v-tab-item v-for="m in manufacturers" :key="m.ID + 'desc'">
+      <v-tab-item v-for="f in factions" :key="f.ID + 'desc'">
         <v-card flat class="px-3 py-3 panel clipped-x-large">
           <v-card-title
             :class="`heading ${$vuetify.breakpoint.lgAndUp ? 'mech pb-3' : 'h2'}`"
-            :style="`color: ${m.Color}; word-break: break-word!important`"
+            :style="`color: ${f.Color}; word-break: break-word!important`"
           >
             <span style="overflow-wrap: normal!important;">
-              {{ m.Name }}
+              {{ f.Name }}
             </span>
           </v-card-title>
           <v-card-text class="mt-1 pr-4 pt-0">
@@ -30,9 +30,9 @@
               style="float: right; margin-left: 20px; margin-right: 50px; min-height: 22vw"
             >
               <img
-                v-if="m.LogoIsExternal"
-                :src="m.Logo"
-                :alt="m.Name"
+                v-if="f.LogoIsExternal"
+                :src="f.Logo"
+                :alt="f.Name"
                 :style="{
                   maxWidth: '22vw',
                   height: '22vw',
@@ -40,17 +40,16 @@
               />
               <svg
                 v-else
-                :data-src="m.Logo + '#Content'"
-                :style="`width:22vw; height:22vw; fill:${m.Color}; stroke:#fff; stroke-width: 8px;`"
+                :data-src="f.Logo + '#Content'"
+                :style="`width:22vw; height:22vw; fill:${f.Color}; stroke:#fff; stroke-width: 8px;`"
               >
               </svg>
             </div>
-            <blockquote class="quote-block fluff-text text--text" v-html-safe="m.Quote" />
             <v-divider class="ma-2" style="width: 800px" />
             <p
               class="body-text stark-text--text mb-2"
               style="min-height: 400px;"
-              v-html-safe="m.Description"
+              v-html-safe="f.Description"
             />
           </v-card-text>
         </v-card>
@@ -64,16 +63,16 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { getModule } from 'vuex-module-decorators'
 import { CompendiumStore } from '@/store'
-import { Manufacturer } from '@/class'
+import { Faction } from '@/classes/Faction'
 import "external-svg-loader"
 
 @Component
-export default class Manufacturers extends Vue {
+export default class Factions extends Vue {
   public tabModel = 0
 
   private compendiumStore = getModule(CompendiumStore, this.$store)
-  get manufacturers(): Manufacturer[] {
-    return this.compendiumStore.Manufacturers.filter(x => !x.IsHidden)
+  get factions(): Faction[] {
+    return this.compendiumStore.Factions
   }
 }
 </script>
