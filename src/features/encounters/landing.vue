@@ -1,44 +1,90 @@
 <template>
-  <v-container fluid style="overflow: hidden; margin-top: 48px; height: calc(100vh - 50px)">
-    <v-row style="height: 100%" align="center">
-      <v-col>
-        <home-card
-          title="NPC Roster"
-          icon="mdi-account-edit"
-          text="Design, edit, and manage NPCs for use in encounters."
-          to="/gm/npc-roster"
-        />
-      </v-col>
+  <div id="wrapper">
+    <g-m-log v-show="$vuetify.breakpoint.mdAndUp" ref="log" />
+    <div style="height: 75px" />
+    <v-container style="height: calc(100vh - 35px)">
+      <v-row justify="space-between" style="height: 100%">
+        <main-btn icon="cci-npc-class" :to="'/compendium'" help="Manage NPCs" @hover="ccLog('npc')">
+          NPC Roster
+        </main-btn>
+        <main-btn
+          icon="cci-encounter"
+          :to="'/pilot_management'"
+          help="Manage Encounters"
+          @hover="ccLog('encounter')"
+        >
+          Encounter Library
+        </main-btn>
+        <main-btn
+          icon="cci-activate"
+          help="Start or continue an Encounter"
+          @hover="ccLog('runner')"
+          @clicked="$refs.contentModal.show()"
+        >
+          Encounter Runner
+        </main-btn>
+      </v-row>
+    </v-container>
 
-      <v-col>
-        <home-card
-          title="Encounter Builder"
-          icon="mdi-account-multiple-plus"
-          text="Compose encounters with NPCs, objectives, and battlefield conditions"
-          to="/gm/encounter-builder"
-        />
-      </v-col>
-
-      <v-col>
-        <home-card
-          title="Mission Runner"
-          icon="mdi-account-group"
-          text="Run sets of encounters digitally with NPC and Pilot status tracking."
-          to="/gm/mission"
-          :icon-offset="13"
-        />
-      </v-col>
-    </v-row>
-  </v-container>
+    <main-footer @log="ccLog($event)" />
+  </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-
-import HomeCard from './components/HomeCard.vue'
+import MainBtn from '../main_menu/_components/MainBtn.vue'
+import GMLog from './components/GMLog.vue'
+import MainFooter from '../main_menu/_components/Footer.vue'
 
 export default Vue.extend({
-  name: 'home',
-  components: { HomeCard },
+  name: 'landing-page',
+  components: {
+    MainBtn,
+    GMLog,
+    MainFooter,
+  },
+  methods: {
+    ccLog(btn: string) {
+      switch (btn) {
+        case 'npc':
+          this.$refs['log'].print(
+            'un-db --about',
+            'Create and manage NPCs for use in combat encounters'
+          )
+          break
+        case 'encounter':
+          this.$refs['log'].print(
+            'un-db locint --help',
+            'Create and manage combat encounters for use in the Encounter Runner'
+          )
+          break
+        case 'runner':
+          this.$refs['log'].print(
+            'man galsim-link',
+            'Create, manage, and run combat encounters with NPCs and Pilots'
+          )
+          break
+        default:
+          break
+      }
+    },
+  },
 })
 </script>
+
+<style scoped>
+#wrapper {
+  width: 100%;
+  height: 100vh;
+  background: url(../../assets/ui/grid.png);
+  animation: 600s scroll infinite linear;
+  top: 0;
+  left: 0;
+}
+
+@keyframes scroll {
+  100% {
+    background-position: -3000px -3000px;
+  }
+}
+</style>
