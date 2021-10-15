@@ -49,7 +49,9 @@ class Npc implements IActor, ICloudSyncable {
   public CloudID: string
   public CloudOwnerID: string
   public IsDirty: boolean
-
+  public Sections: any[]
+  public Clocks: any[]
+  public Tables: any[]
   private _active: boolean
   private _id: string
   private _name: string
@@ -77,26 +79,21 @@ class Npc implements IActor, ICloudSyncable {
   private _defeat: string
   private cc_ver: string
 
-  public constructor(npcClass: NpcClass, tier?: number) {
+  public constructor(npcClass?: NpcClass, tier?: number) {
     const t = tier || 1
     this._active = false
     this._id = uuid()
-    this._name = `New ${npcClass.Name[0].toUpperCase()}${npcClass.Name.slice(1)}`
+    this._name = `New NPC`
     this._subtitle = ''
     this._tier = t
     this._templates = []
     this._user_labels = []
+    this.Sections = []
+    this.Clocks = []
+    this.Tables = []
     this._side = EncounterSide.Enemy
     this._note = this._cloud_image = this._local_image = ''
     this._campaign = ''
-    this._class = npcClass
-    this._tag = this.Class.Role.toLowerCase() === 'biological' ? 'Biological' : 'Mech'
-    this._stats = NpcStats.FromClass(npcClass, t)
-    this._current_stats = NpcStats.FromMax(this._stats)
-    this._items = []
-    npcClass.BaseFeatures.forEach(f => {
-      this._items.push(new NpcItem(f, t))
-    })
     this._burn = 0
     this._overshield = 0
     this._turn_actions = 2
@@ -105,8 +102,22 @@ class Npc implements IActor, ICloudSyncable {
     this._statuses = []
     this._conditions = []
     this._resistances = []
+    if (npcClass) this.SetClass(npcClass, t)
     this.cc_ver = process.env.npm_package_version || 'UNKNOWN'
     this.LastSync = new Date('1-1-1000').toJSON()
+  }
+
+  public SetClass(npcClass: NpcClass, tier: number) {
+    this._name = `New ${npcClass.Name[0].toUpperCase()}${npcClass.Name.slice(1)}`
+    this._class = npcClass
+    this._tag = this.Class.Role.toLowerCase() === 'biological' ? 'Biological' : 'Mech'
+    this._stats = NpcStats.FromClass(npcClass, tier)
+    this._current_stats = NpcStats.FromMax(this._stats)
+    this._items = []
+    npcClass.BaseFeatures.forEach(f => {
+      this._items.push(new NpcItem(f, tier))
+    })
+
   }
 
   public get Active(): boolean {
@@ -171,7 +182,8 @@ class Npc implements IActor, ICloudSyncable {
   }
 
   public get Name(): string {
-    return this._name
+    if (this._name) return this._name
+    return 'T[tier] [template] [class]'
   }
 
   public set Name(val: string) {

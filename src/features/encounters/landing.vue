@@ -4,7 +4,12 @@
     <div style="height: 75px" />
     <v-container style="height: calc(100vh - 35px)">
       <v-row justify="space-between" style="height: 100%">
-        <main-btn icon="cci-npc-class" :to="'/compendium'" help="Manage NPCs" @hover="ccLog('npc')">
+        <main-btn
+          icon="cci-npc-class"
+          :to="'gm/npc-roster'"
+          help="Manage NPCs"
+          @hover="ccLog('npc')"
+        >
           NPC Roster
         </main-btn>
         <main-btn

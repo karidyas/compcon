@@ -64,7 +64,7 @@
 
     <slot name="profile" />
 
-    <div v-if="item.Tags && item.Tags.length" class="mt-2">
+    <div v-if="item.Tags && item.Tags.length">
       <div class="overline ml-n2 mb-n1 subtle--text">EQUIPMENT TAGS</div>
       <cc-tags :tags="item.Tags" extended />
     </div>
