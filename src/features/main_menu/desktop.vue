@@ -23,7 +23,7 @@
         <main-btn
           icon="cci-encounter"
           :to="'/gm'"
-          help="Manage NPCs/Encounters/Missions"
+          help="Manage NPCs and Encounters"
           @hover="ccLog('gm')"
         >
           GM Toolkit

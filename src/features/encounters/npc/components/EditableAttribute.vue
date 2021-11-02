@@ -2,8 +2,8 @@
   <v-col :cols="cols">
     <v-card tile outlined class="text-center">
       <v-card-title
-        :class="`${color} white--text caption pa-1`"
-        style="font-weight: bold; max-height: 28px; font-size: 15px!important"
+        :class="`${color} white--text caption py-1 px-2`"
+        style="font-weight: bold; max-height: 28px; font-size: 18px!important"
       >
         {{ attr }}
         <v-icon v-if="editable && !editMode" dark small class="fadeSelect" @click="editMode = true">

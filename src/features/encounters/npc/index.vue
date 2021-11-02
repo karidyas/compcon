@@ -20,7 +20,7 @@ import Vue from 'vue'
 import GmCollectionView from '../_views/GMCollectionView.vue'
 import Editor from './editor.vue'
 import { getModule } from 'vuex-module-decorators'
-import { NpcStore } from '@/store'
+import { CompendiumStore, NpcStore } from '@/store'
 import { Npc } from '@/class'
 
 export default Vue.extend({
@@ -43,7 +43,9 @@ export default Vue.extend({
       this.dialog = true
     },
     addNew() {
-      this.selected = new Npc()
+      const store = getModule(CompendiumStore, this.$store)
+
+      this.selected = new Npc(store.NpcClasses[0])
       this.dialog = true
     },
     SaveAndClose() {

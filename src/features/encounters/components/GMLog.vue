@@ -15,8 +15,6 @@
         ></p>
         <p id="output" ref="output" class="flavor-text subtle--text text--darken-1 py-0 my-0">
           <br />
-          <br />
-          <br />
         </p>
       </v-col>
       <v-col cols="auto" class="ml-2">

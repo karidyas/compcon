@@ -257,6 +257,11 @@ class Npc implements IActor, ICloudSyncable {
     return this._tier
   }
 
+  public get TierIcon(): number | string {
+    if (this.IsCustomTier) return 'mdi-star-circle-outline'
+    return `cci-rank-${this.Tier}`
+  }
+
   public set Tier(newTier: number | string) {
     this._tier = newTier
     if (typeof newTier === 'number') {
@@ -268,6 +273,7 @@ class Npc implements IActor, ICloudSyncable {
     }
     this.save()
   }
+
 
   public get IsCustomTier(): boolean {
     return this._tier === 'custom'

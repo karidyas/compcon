@@ -28,5 +28,6 @@ body {
 .wrapper {
   width: 100%;
   margin-top: 48px;
+  overflow-y: hidden;
 }
 </style>
