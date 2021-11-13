@@ -21,7 +21,7 @@
           <v-col cols="2" class="ml-auto">
             <v-select
               v-model="grouping"
-              :items="['None', 'Campaigns', 'Labels']"
+              :items="['None', 'Campaigns', 'Labels', 'Class', 'Tier']"
               label="Group By"
               hide-details
               outlined
@@ -31,7 +31,7 @@
           <v-col cols="2">
             <v-select
               v-model="sorting"
-              :items="['Name']"
+              :items="['Name', 'Campaigns', 'Labels', 'Class', 'Tier']"
               label="Sort By"
               hide-details
               outlined
