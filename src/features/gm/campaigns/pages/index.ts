@@ -6,7 +6,7 @@ import Combat from './combat.vue'
 import Downtime from './downtime.vue'
 import Factions from './factions/index.vue'
 import Locations from './locations/index.vue'
-import Characters from './characters/index.vue'
+// import Characters from './characters/index.vue'
 
 export {
   Overview,
@@ -17,5 +17,5 @@ export {
   Downtime,
   Factions,
   Locations,
-  Characters,
+  // Characters,
 }

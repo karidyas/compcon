@@ -1,5 +1,5 @@
 <template>
-  <v-card-text class="mb-0 pb-0">
+  <v-card-text :class="`mb-0 pb-0 ${dense ? 'pt-0' : ''}`">
     <v-row class="flavor-text" no-gutters>
       <slot />
     </v-row>
@@ -13,7 +13,7 @@
     <slot name="statblock" />
 
     <div v-if="item.Effect">
-      <div class="overline ml-n2 mt-2 subtle--text">EQUIPMENT EFFECT</div>
+      <div class="overline ml-n2 mt-1 subtle--text">EQUIPMENT EFFECT</div>
       <p class="text--text body-text mb-1" v-html-safe="item.Effect" />
     </div>
     <slot name="other_effects" />
@@ -65,8 +65,8 @@
     <slot name="profile" />
 
     <div v-if="item.Tags && item.Tags.length">
-      <div class="overline ml-n2 mb-n1 subtle--text">EQUIPMENT TAGS</div>
-      <cc-tags :tags="item.Tags" extended />
+      <div v-show="!dense" class="overline ml-n2 mb-n1 subtle--text">EQUIPMENT TAGS</div>
+      <cc-tags :tags="item.Tags" :extended="!dense" :small="dense" />
     </div>
     <!-- <div v-else-if="item.ProfileTags && item.ProfileTags.length">
       <div class="overline ml-n2 mb-n1 subtle--text">EQUIPMENT TAGS</div>
@@ -104,6 +104,7 @@ export default Vue.extend({
       required: true,
     },
     notes: { type: Boolean },
+    dense: { type: Boolean },
   },
 })
 </script>

@@ -16,7 +16,10 @@
         <span v-else :style="item.Destroyed ? 'text-decoration: line-through' : ''">
           {{ item.Name }} (T{{ item.Tier }})
         </span>
-        <span v-if="!item.Destroyed && !active" class="caption">//{{ item.Feature.Origin }}</span>
+        <span v-if="!item.Destroyed && !active" class="caption">
+          //{{ item.Feature.Origin.Name }} ({{ item.Feature.Origin.Type }}),
+          {{ item.Feature.Origin.Optional ? 'Optional' : 'Base' }} {{ item.Type }}
+        </span>
         &emsp;
       </div>
     </v-card-title>

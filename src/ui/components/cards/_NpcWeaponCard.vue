@@ -1,5 +1,5 @@
 <template>
-  <equipment-card-base :item="item">
+  <equipment-card-base :item="item" :dense="dense">
     <v-col cols="auto">
       <cc-range-element :range="item.Range" />
     </v-col>
@@ -65,9 +65,12 @@
         </span>
       </div>
     </v-col>
-    <v-col cols="auto" class="ml-auto text-right">
+    <v-col v-if="!dense" cols="auto" class="ml-auto text-right">
       <div class="heading h2">{{ item.WeaponType }}</div>
-      <span class="flavor-text subtle--text">// {{ item.Origin }}</span>
+      <span class="flavor-text subtle--text" style="text-transform: capitalize;">
+        //{{ item.Origin.Name }} ({{ item.Origin.Type }}),
+        {{ item.Origin.Optional ? 'Optional' : 'Base' }} Weapon
+      </span>
       <div v-if="item.InLcp" class="flavor-text subtle--text">{{ item.LcpName }}</div>
     </v-col>
     <p
@@ -92,6 +95,7 @@ export default Vue.extend({
       type: Object,
       required: true,
     },
+    dense: { type: Boolean },
   },
 })
 </script>

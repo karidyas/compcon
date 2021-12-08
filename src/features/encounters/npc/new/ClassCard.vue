@@ -6,7 +6,7 @@
           {{ npcc.Name }}
         </span>
       </v-col>
-      <v-col v-if="npcc.InLcp" class="ml-auto mt-n4"
+      <v-col v-if="npcc.InLcp" class="ml-auto mt-n4">
         <div class="heading h3 text--text">{{ npcc.LcpName }}</div>
       </v-col>
       <v-col cols="auto" class="ml-auto text-center mt-n4">

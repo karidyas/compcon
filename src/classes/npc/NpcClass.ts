@@ -77,12 +77,16 @@ export class NpcClass {
     return this._info.tactics
   }
 
+  private get _features(): NpcFeature[] {
+    return store.getters.NpcFeatures.filter(x => x.Origin.ID === this.ID)
+  }
+
   public get BaseFeatures(): NpcFeature[] {
-    return this._base_features.map(x => store.getters.referenceByID('NpcFeatures', x))
+    return this._features.filter(x => !x.Origin.Optional)
   }
 
   public get OptionalFeatures(): NpcFeature[] {
-    return this._optional_features.map(x => store.getters.referenceByID('NpcFeatures', x))
+    return this._features.filter(x => x.Origin.Optional)
   }
 
   public get Stats(): NpcClassStats {

@@ -38,7 +38,16 @@
         </main-btn>
       </v-row>
     </v-container>
-
+    <cc-solo-dialog
+      ref="contentModal"
+      no-title-clip
+      no-pad
+      large
+      no-confirm
+      title="Manage Content Packs"
+    >
+      <content-page />
+    </cc-solo-dialog>
     <main-footer @log="ccLog($event)" />
   </div>
 </template>
@@ -49,6 +58,7 @@ import MainTitle from './_components/MainTitle.vue'
 import MainBtn from './_components/MainBtn.vue'
 import MainFooter from './_components/Footer.vue'
 import CCLog from '../main_menu/_components/CCLog.vue'
+import ContentPage from '../nav/pages/ExtraContent/index.vue'
 
 export default Vue.extend({
   name: 'landing-page',
@@ -57,6 +67,7 @@ export default Vue.extend({
     MainBtn,
     MainFooter,
     CCLog,
+    ContentPage,
   },
   methods: {
     ccLog(btn: string) {

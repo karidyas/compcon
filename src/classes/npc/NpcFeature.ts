@@ -11,7 +11,8 @@ export enum NpcFeatureType {
 export interface IOriginData {
   type: string
   name: string
-  base: boolean
+  optional: boolean
+  origin_id: string
 }
 
 export interface INpcFeatureData {
@@ -67,22 +68,31 @@ export abstract class NpcFeature {
     return this._name
   }
 
-  public get Origin(): string {
-    return `${this._origin.name} ${this._origin.type} - ${
-      this._origin.base ? 'Base' : 'Optional'
-    } ${this.FeatureType}`
+  public get Origin() {
+    return {
+      ID: this._origin.origin_id,
+      Type: this._origin.type,
+      Name: this._origin.name,
+      Optional: this._origin.optional
+    }
   }
 
-  public get OriginClass(): string {
-    return this._origin.name
-  }
+  // public get OriginString(): string {
+  //   return `${this._origin.name} ${this._origin.type} - ${
+  //     !this._origin.optional ? 'Base' : 'Optional'
+  //   } ${this.FeatureType}`
+  // }
 
-  public get OriginSet(): string {
-    return this._origin.base ? 'Base' : 'Optional'
-  }
+  // public get OriginClass(): string {
+  //   return this._origin.name
+  // }
+
+  // public get OriginSet(): string {
+  //   return !this._origin.optional ? 'Base' : 'Optional'
+  // }
 
   public get IsBase(): boolean {
-    return this._origin.base
+    return !this._origin.optional
   }
 
   public get Bonus(): object {

@@ -15,6 +15,7 @@
     >
       <v-list-item-title class="heading h2 ml-2">{{ e.Name }}</v-list-item-title>
     </v-list-item>
+    <div style="height: 20px" />
     <div v-if="!templates.length" class="subtle--text heading h2 text-center">
       // NO TEMPLATES AVAILABLE //
     </div>

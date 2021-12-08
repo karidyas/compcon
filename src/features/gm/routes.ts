@@ -2,10 +2,10 @@ import Main from './index.vue'
 
 import Home from './landing.vue'
 
-import Campaigns from './campaigns/index.vue'
-import CampaignEditor from './campaigns/editor.vue'
-import CampaignOverviewPage from './campaigns/pages/overview.vue'
-import CampaignSectionPage from './campaigns/pages/section.vue'
+// import Campaigns from './campaigns/index.vue'
+// import CampaignEditor from './campaigns/editor.vue'
+// import CampaignOverviewPage from './campaigns/pages/overview.vue'
+// import CampaignSectionPage from './campaigns/pages/section.vue'
 
 
 import NPCs from './npcs/index.vue'
@@ -30,30 +30,30 @@ const routes: RouteConfig[] = [
         name: 'gm-toolkit-home',
         component: Home,
       },
-      {
-        path: 'campaigns',
-        name: 'gm-campaigns',
-        component: Campaigns
-      },
-      {
-        path: 'campaigns/edit',
-        name: 'gm-campaigns',
-        component: CampaignEditor,
-        children: [
-          {
-            path: 'overview',
-            name: 'campaign-edit-overview',
-            component: CampaignOverviewPage,
-            props: true
-          },
-          {
-            path: 'section/',
-            name: 'campaign-edit-section',
-            component: CampaignSectionPage,
-            props: true
-          }
-        ]
-      },
+      // {
+      //   path: 'campaigns',
+      //   name: 'gm-campaigns',
+      //   component: Campaigns
+      // },
+      // {
+      //   path: 'campaigns/edit',
+      //   name: 'gm-campaigns',
+      //   component: CampaignEditor,
+      //   children: [
+      //     {
+      //       path: 'overview',
+      //       name: 'campaign-edit-overview',
+      //       component: CampaignOverviewPage,
+      //       props: true
+      //     },
+      //     {
+      //       path: 'section/',
+      //       name: 'campaign-edit-section',
+      //       component: CampaignSectionPage,
+      //       props: true
+      //     }
+      //   ]
+      // },
       {
         path: 'npcs',
         name: 'gm-npcs',

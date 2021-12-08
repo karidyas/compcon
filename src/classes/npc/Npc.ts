@@ -178,7 +178,7 @@ class Npc implements IActor, ICloudSyncable {
   }
 
   public get Icon(): string {
-    return this.Class.RoleIcon
+    return this.Class ? this.Class.RoleIcon : 'mdi-help-rhombus-outline'
   }
 
   public get Name(): string {
