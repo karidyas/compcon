@@ -1,10 +1,10 @@
 <template>
-  <v-card-text :class="`mb-0 pb-0 ${dense ? 'pt-0' : ''}`">
-    <v-row class="flavor-text" no-gutters>
+  <v-card-text class="mb-0 pb-0 pt-0">
+    <v-row class="flavor-text" dense align="center">
       <slot />
     </v-row>
 
-    <v-row v-if="item.LicenseString" class="mb-2 mt-n1">
+    <v-row v-if="item.LicenseString" class="mb-2">
       <v-divider class="mt-3" />
       <v-icon color="panel-border">cci-{{ $_.kebabCase(item.ItemType) }}</v-icon>
       <v-divider class="mt-3" />
@@ -13,7 +13,8 @@
     <slot name="statblock" />
 
     <div v-if="item.Effect">
-      <div class="overline ml-n2 mt-1 subtle--text">EQUIPMENT EFFECT</div>
+      <div v-if="!dense" class="overline ml-n2 mt-1 subtle--text">EQUIPMENT EFFECT</div>
+      <div v-else style="height: 10px" />
       <p class="text--text body-text mb-1" v-html-safe="item.Effect" />
     </div>
     <slot name="other_effects" />

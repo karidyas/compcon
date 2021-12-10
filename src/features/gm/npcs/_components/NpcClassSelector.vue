@@ -52,7 +52,7 @@
                     </span>
                   </div>
                 </template>
-                <template v-slot:item[`Name`]`="{ item }">
+                <template v-slot:[`item.Name`]="{ item }">
                   <v-btn
                     block
                     outlined
@@ -76,13 +76,9 @@
             <v-row justify="center" dense class="mb-n10">
               <v-col cols="10">
                 <v-btn large block color="primary" :disabled="!selected" @click="AddNpc()">
-                  <v-icon left>mdi-plus</v-icon>
-                  <span v-if="selected">Add New {{ selected.Name }}</span>
+                  <v-icon left>mdi-edit</v-icon>
+                  <span v-if="selected">Set {{ selected.Name }} Class</span>
                   <span v-else>Select NPC Class</span>
-                </v-btn>
-                <v-btn outlined block small class="mt-1" to="/gm/npc-roster">
-                  <v-icon left>mdi-chevron-left</v-icon>
-                  Return to NPC Roster
                 </v-btn>
               </v-col>
             </v-row>
@@ -99,150 +95,88 @@
                   <div class="heading h3 text--text">{{ selected.LcpName }}</div>
                 </v-col>
                 <v-col cols="auto" class="ml-auto text-center mt-n4">
-                  <v-icon size="60" :color="selected.Color">{{ selected.RoleIcon }}</v-icon>
+                  <v-icon size="60">{{ selected.RoleIcon }}</v-icon>
                   <div class="overline mt-n1">{{ selected.Role }}</div>
                 </v-col>
               </v-row>
               <p class="flavor-text panel pa-2 stark--text" v-html-safe="selected.Flavor" />
               <span class="heading h3 accent--text">Tactics</span>
               <p class="body-1" v-html-safe="selected.Tactics" />
+
               <v-divider class="mb-3" />
-              <v-row dense align="center">
-                <v-col>
-                  <v-btn-toggle
-                    v-model="tierPreview"
-                    dense
-                    mandatory
-                    active-class="accent--text"
-                    class="mb-2"
-                  >
-                    <v-btn :value="1">
-                      <v-icon left>cci-rank-1</v-icon>
-                      Tier 1
-                    </v-btn>
-                    <v-btn :value="2">
-                      <v-icon left>cci-rank-2</v-icon>
-                      Tier 2
-                    </v-btn>
-                    <v-btn :value="3">
-                      <v-icon left>cci-rank-3</v-icon>
-                      Tier 3
-                    </v-btn>
-                  </v-btn-toggle>
-                  <v-row dense no-gutters>
-                    <editable-attribute
-                      attr="HULL"
-                      :val="selected.Stats.Hull(tierPreview)"
-                      :color="selected.Color"
-                    />
-                    <editable-attribute
-                      attr="AGI"
-                      :val="selected.Stats.Agility(tierPreview)"
-                      :color="selected.Color"
-                    />
-                    <editable-attribute
-                      attr="SYS"
-                      :val="selected.Stats.Systems(tierPreview)"
-                      :color="selected.Color"
-                    />
-                    <editable-attribute
-                      attr="ENG"
-                      :val="selected.Stats.Engineering(tierPreview)"
-                      :color="selected.Color"
-                    />
-                  </v-row>
-                  <v-divider class="my-2" />
-                  <v-row dense no-gutters>
-                    <editable-attribute
-                      attr="STRUCTURE"
-                      :val="selected.Stats.Structure(tierPreview)"
-                      :color="selected.Color"
-                    />
-                    <editable-attribute
-                      attr="ARMOR"
-                      :val="selected.Stats.Armor(tierPreview)"
-                      :color="selected.Color"
-                    />
-                    <editable-attribute
-                      attr="HP"
-                      :val="selected.Stats.HP(tierPreview)"
-                      :color="selected.Color"
-                    />
-                    <editable-attribute
-                      attr="REACTOR"
-                      :val="selected.Stats.Stress(tierPreview)"
-                      :color="selected.Color"
-                    />
-                    <editable-attribute
-                      v-if="selected.Role.toLowerCase() !== 'biological'"
-                      attr="HEAT CAPACITY"
-                      :val="selected.Stats.HeatCapacity(tierPreview)"
-                      :color="selected.Color"
-                    />
-                  </v-row>
-                  <v-row dense no-gutters>
-                    <editable-attribute
-                      attr="SPEED"
-                      :val="selected.Stats.Speed(tierPreview)"
-                      :color="selected.Color"
-                    />
-                    <editable-attribute
-                      attr="SAVE"
-                      :val="selected.Stats.Save(tierPreview)"
-                      :color="selected.Color"
-                    />
-                    <editable-attribute
-                      attr="EVADE"
-                      :val="selected.Stats.Evade(tierPreview)"
-                      :color="selected.Color"
-                    />
-                    <editable-attribute
-                      attr="E-DEFENSE"
-                      :val="selected.Stats.EDefense(tierPreview)"
-                      :color="selected.Color"
-                    />
-                    <editable-attribute
-                      attr="SENSOR"
-                      :val="selected.Stats.Sensor(tierPreview)"
-                      :color="selected.Color"
-                    />
-                  </v-row>
-                  <v-divider class="my-2" />
-                  <v-row dense no-gutters>
-                    <editable-attribute attr="ACTIVATIONS" :val="1" :color="selected.Color" />
-                    <editable-attribute
-                      attr="SIZE"
-                      :val="
-                        selected.Stats.Sizes(tierPreview)
-                          .join(' or ')
-                          .replace('0.5', '½')
-                      "
-                      :color="selected.Color"
-                    />
-                  </v-row>
-                </v-col>
-              </v-row>
-              <cc-title small :color="selected.Color" class="mt-2">
-                Base Features
-              </cc-title>
+
               <v-row dense>
-                <v-col v-for="f in selected.BaseFeatures" :key="f.ID" cols="12">
-                  <cc-npc-feature-card :feature="f" :tier="tierPreview" />
-                </v-col>
+                <tiered-attribute
+                  v-for="i in hase"
+                  :key="`hase_item_${i}`"
+                  :title="i"
+                  :arr="selected.Stats.StatArr(i)"
+                />
               </v-row>
-              <cc-title
-                v-if="selected.OptionalFeatures.length"
-                small
-                :color="selected.Color"
-                class="mt-2"
-              >
-                Optional Features
-              </cc-title>
               <v-row dense>
-                <v-col v-for="f in selected.OptionalFeatures" :key="f.ID" cols="12">
-                  <cc-npc-feature-card :feature="f" :tier="tierPreview" />
+                <v-col class="text-center">
+                  <div class="caption">SIZE</div>
+                  <div
+                    class="heading h3 primary--text"
+                    v-html="
+                      selected.Stats.Sizes(tierPreview)
+                        .join(' or ')
+                        .replace('0.5', '½')
+                    "
+                  />
                 </v-col>
+                <tiered-attribute
+                  v-for="i in p1"
+                  :key="`p1_item_${i}`"
+                  :title="i"
+                  :arr="selected.Stats.StatArr(i)"
+                />
               </v-row>
+              <v-row dense>
+                <tiered-attribute
+                  v-for="i in p2"
+                  :key="`p1_item_${i}`"
+                  :title="i"
+                  :arr="selected.Stats.StatArr(i)"
+                />
+              </v-row>
+
+              <v-expansion-panels :value="[0, 1]" class="mt-2" multiple>
+                <v-expansion-panel>
+                  <v-expansion-panel-header>
+                    <span class="heading h3">
+                      <b class="accent--text">Base</b>
+                      Features
+                      <span class="caption">({{ selected.BaseFeatures.length }})</span>
+                    </span>
+                  </v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    <cc-dense-card
+                      v-for="b in selected.BaseFeatures"
+                      :key="b.ID"
+                      :item="b"
+                      class="my-1"
+                    />
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+                <v-expansion-panel v-if="selected.OptionalFeatures.length">
+                  <v-expansion-panel-header>
+                    <span class="heading h3">
+                      <b class="accent--text">Optional</b>
+                      Features
+                      <span class="caption">({{ selected.OptionalFeatures.length }})</span>
+                    </span>
+                  </v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    <cc-dense-card
+                      v-for="f in selected.OptionalFeatures"
+                      :key="f.ID"
+                      :item="f"
+                      class="my-1"
+                    />
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+              </v-expansion-panels>
             </v-container>
 
             <v-row v-else align="center" justify="center" style="width: 100%; height: 100%;">
@@ -263,20 +197,25 @@ import { getModule } from 'vuex-module-decorators'
 import { CompendiumStore, NpcStore } from '@/store'
 import { Npc } from '@/class'
 import PanelView from '../../_components/PanelView.vue'
+import TieredAttribute from '../_components/_subcomponents/TieredAttribute.vue'
 
 export default Vue.extend({
   name: 'npc-class-selector',
   props: {
     item: { type: Object, required: true },
   },
-  components: { PanelView },
+  components: { PanelView, TieredAttribute },
   data: () => ({
+    tierPreview: 1,
     dialog: false,
     selected: null,
     search: '',
     grouping: null,
     headers: [{ text: 'Name', value: 'Name', align: 'left' }],
     classes: [],
+    hase: ['Hull', 'Agility', 'Systems', 'Engineering'],
+    p1: ['Armor', 'HP', 'Heatcap'],
+    p2: ['Evade', 'Edef', 'Speed', 'Sensor', 'Save'],
   }),
   watch: {
     selectedClass() {
@@ -289,10 +228,12 @@ export default Vue.extend({
   },
   methods: {
     AddNpc() {
-      const store = getModule(NpcStore, this.$store)
-      store.addNpc(new Npc(this.selectedClass, this.$refs.card.tierPreview))
-      this.$store.dispatch('cloudSync', { callback: null, condition: 'selectedreate' })
-      this.$router.push('./npc-roster')
+      this.item.SetClass(this.selected, this.item.Tier)
+      this.dialog = false
+      // const store = getModule(NpcStore, this.$store)
+      // store.addNpc(new Npc(this.selectedClass, this.$refs.card.tierPreview))
+      // this.$store.dispatch('cloudSync', { callback: null, condition: 'selectedreate' })
+      // this.$router.push('./npc-roster')
     },
   },
 })

@@ -6,13 +6,9 @@
         {{ item.Origin.Optional ? 'Optional' : 'Base' }} Reaction
       </span>
     </v-col>
-    <div slot="statblock">
-      <span class="overline ml-n2">TRIGGER</span>
-      <p
-        class="text--text"
-        style="font-size: 20px"
-        v-html-safe="`<b>Trigger:&nbsp;</b>${item.Trigger}`"
-      />
+    <div slot="statblock" class="mt-2 mb-n2">
+      <div class="overline ml-n2 mb-n2">TRIGGER</div>
+      <p class="text--text body-1 font-weight-bold" v-html-safe="`${item.Trigger}`" />
     </div>
   </equipment-card-base>
 </template>
@@ -22,7 +18,7 @@ import Vue from 'vue'
 import EquipmentCardBase from './_EquipmentCardBase.vue'
 
 export default Vue.extend({
-  name: 'cc-npc-weapon-card',
+  name: 'cc-npc-reaction-card',
   components: { EquipmentCardBase },
   props: {
     item: {

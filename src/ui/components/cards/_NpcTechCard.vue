@@ -1,9 +1,9 @@
 <template>
   <equipment-card-base :item="item" :dense="dense">
-    <v-col cols="auto">
-      <div class="text-center ml-auto mr-auto" style="display: inline-block">
-        <div class="clip-icon">
-          <v-icon x-large>cci-reticle</v-icon>
+    <v-col cols="auto" class="text-center ml-auto mr-auto">
+      <div style="display: inline-block">
+        <div v-show="!dense" class="clip-icon">
+          <v-icon x-large>cci-reticule</v-icon>
         </div>
         <span>
           +{{ item.AttackBonus(1) }}/+{{ item.AttackBonus(2) }}/+{{ item.AttackBonus(3) }}
@@ -13,12 +13,13 @@
           </div>
         </span>
       </div>
+      <v-divider v-show="item.Accuracy(1)" vertical class="mx-4" />
       <div
         v-if="item.Accuracy(1) > 0"
         class="text-center ml-auto mr-auto"
         style="display: inline-block"
       >
-        <div class="clip-icon">
+        <div v-show="!dense" class="clip-icon">
           <v-icon x-large>cci-accuracy</v-icon>
         </div>
         <span>

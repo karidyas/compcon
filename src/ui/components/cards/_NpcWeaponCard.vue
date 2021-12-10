@@ -1,23 +1,31 @@
 <template>
   <equipment-card-base :item="item" :dense="dense">
-    <v-col cols="auto">
-      <cc-range-element :range="item.Range" />
+    <v-col class="text-center">
+      <cc-range-element :range="item.Range" :small="dense" />
     </v-col>
     <v-divider vertical class="mx-4" />
-    <v-col cols="auto">
+    <v-col class="text-center">
       <div class="text-center ml-auto mr-auto" style="display: inline-block">
-        <span>
-          <cc-damage-element :damage="item.Damage(1)" />
-          <cc-damage-element :damage="item.Damage(2)" />
-          <cc-damage-element :damage="item.Damage(3)" />
-        </span>
+        <v-row no-gutters>
+          <v-col :cols="dense ? 'auto' : 12">
+            <cc-damage-element :damage="item.Damage(1)" :small="dense" />
+          </v-col>
+          <v-col v-if="dense" cols="auto" class="px-1">/</v-col>
+          <v-col :cols="dense ? 'auto' : 12">
+            <cc-damage-element :damage="item.Damage(2)" :small="dense" />
+          </v-col>
+          <v-col v-if="dense" cols="auto" class="px-1">/</v-col>
+          <v-col :cols="dense ? 'auto' : 12">
+            <cc-damage-element :damage="item.Damage(3)" :small="dense" />
+          </v-col>
+        </v-row>
       </div>
     </v-col>
     <v-divider vertical class="mx-4" />
-    <v-col cols="auto">
+    <v-col class="text-center">
       <div class="text-center ml-auto mr-auto" style="display: inline-block">
-        <div class="clip-icon">
-          <v-icon x-large>cci-reticle</v-icon>
+        <div v-show="!dense" class="clip-icon">
+          <v-icon x-large>cci-reticule</v-icon>
         </div>
         <span>
           +{{ item.AttackBonus(1) }}/+{{ item.AttackBonus(2) }}/+{{ item.AttackBonus(3) }}
@@ -28,14 +36,14 @@
         </span>
       </div>
     </v-col>
-    <v-divider vertical class="mx-4" />
-    <v-col cols="auto">
+    <v-divider v-show="item.Accuracy(1)" vertical class="mx-4" />
+    <v-col class="text-center" v-if="item.Accuracy(1)">
       <div
         v-if="item.Accuracy(1) > 0"
         class="text-center ml-auto mr-auto"
         style="display: inline-block"
       >
-        <div class="clip-icon">
+        <div v-show="!dense" class="clip-icon">
           <v-icon x-large>cci-accuracy</v-icon>
         </div>
         <span>
@@ -51,7 +59,7 @@
         class="text-center ml-auto mr-auto"
         style="display: inline-block"
       >
-        <div class="clip-icon">
+        <div v-show="!dense" class="clip-icon">
           <v-icon x-large>cci-difficulty</v-icon>
         </div>
         <span>

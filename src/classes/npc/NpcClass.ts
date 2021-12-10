@@ -57,7 +57,7 @@ export class NpcClass {
   }
 
   public get Role(): string {
-    return this._role
+    return this._role.toUpperCase()
   }
 
   public get RoleIcon(): string {
