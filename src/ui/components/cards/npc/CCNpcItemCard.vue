@@ -4,6 +4,7 @@
     v-if="component"
     :item="item"
     :active="active"
+    :fullHeight="fullHeight"
     @remove-feature="$emit('remove-feature', $event)"
     @add-reaction="$emit('add-reaction', $event)"
     @recalc="$emit('recalc')"
@@ -19,6 +20,9 @@ export default {
       required: true,
     },
     active: {
+      type: Boolean,
+    },
+    fullHeight: {
       type: Boolean,
     },
   },

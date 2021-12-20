@@ -1,17 +1,7 @@
 <template>
   <div class="pt-3">
     <div class="caption mb-1">TEMPLATES</div>
-    <v-chip
-      v-for="t in item.Templates"
-      :key="t.Name"
-      cols="auto"
-      outlined
-      label
-      close
-      close-icon="mdi-close"
-      class="mr-2"
-      @click:close="item.RemoveTemplate(t)"
-    >
+    <v-chip v-for="t in item.Templates" :key="t.Name" cols="auto" outlined label class="mr-2">
       <cc-tooltip :content="t.Description">
         {{ t.Name }}
       </cc-tooltip>
@@ -104,6 +94,14 @@
               </div>
               <p class="flavor-text mb-0" v-html-safe="selected.Description" />
 
+              <v-alert
+                v-show="selected.ClassFeatureSelectionInfo"
+                dense
+                color="panel"
+                class="text-center ma-0"
+                v-html="selected.ClassFeatureSelectionInfo"
+              />
+
               <v-expansion-panels :value="[0, 1]" class="mt-2" multiple>
                 <v-expansion-panel>
                   <v-expansion-panel-header>
@@ -124,11 +122,31 @@
                 </v-expansion-panel>
                 <v-expansion-panel v-if="selected.OptionalFeatures.length">
                   <v-expansion-panel-header>
-                    <span class="heading h3">
-                      <b class="accent--text">Optional</b>
-                      Features
-                      <span class="caption">({{ selected.OptionalFeatures.length }})</span>
-                    </span>
+                    <v-row no-gutters align="centter">
+                      <v-col align-self="center">
+                        <div class="heading h3">
+                          <b class="accent--text">Optional</b>
+                          Features
+                          <span class="caption">({{ selected.OptionalFeatures.length }})</span>
+                        </div>
+                      </v-col>
+                      <v-col align-self="center">
+                        <v-alert
+                          v-show="selected.FeatureSelectionInfo"
+                          dense
+                          color="panel"
+                          class="text-center ma-0"
+                          v-html="selected.FeatureSelectionInfo"
+                        />
+                        <v-alert
+                          v-show="selected.Caveat"
+                          dense
+                          color="panel"
+                          class="text-center mb-0 mt-1"
+                          v-html="selected.Caveat"
+                        />
+                      </v-col>
+                    </v-row>
                   </v-expansion-panel-header>
                   <v-expansion-panel-content>
                     <cc-dense-card

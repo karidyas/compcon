@@ -2,9 +2,7 @@
   <span>
     <v-menu offset-x left>
       <template v-slot:activator="{ on }">
-        <v-btn x-small icon class="fadeSelect" dark left v-on="on">
-          <v-icon icon v-on="on">mdi-settings</v-icon>
-        </v-btn>
+        <v-icon icon dark class="fadeSelect" v-on="on">mdi-settings</v-icon>
       </template>
       <v-list dense>
         <v-list-item :disabled="item.Tier === 3" @click="upgradeTier()">
@@ -37,17 +35,6 @@
           </v-list-item-icon>
           <v-list-item-content>
             <v-list-item-title>Set Custom Description</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item @click="item.IsVisible = !item.IsVisible">
-          <v-list-item-icon class="ma-0 mr-2 mt-2">
-            <v-icon>mdi-eye{{ !item.IsVisible ? '-off' : '' }}</v-icon>
-          </v-list-item-icon>
-          <v-list-item-content>
-            <v-list-item-title>
-              <b>{{ item.IsVisible ? 'Visible' : 'Hidden' }}</b>
-              in Active Mode
-            </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <div>

@@ -14,10 +14,6 @@
           <v-icon left>cci-rank-3</v-icon>
           Tier 3
         </v-btn>
-        <v-btn value="custom">
-          <v-icon left>mdi-star-circle-outline</v-icon>
-          Custom
-        </v-btn>
       </v-btn-toggle>
     </v-col>
   </v-row>

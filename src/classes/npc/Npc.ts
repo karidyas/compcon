@@ -14,7 +14,7 @@ interface INpcData {
   isLocal: boolean
   lastSync: string
   class: string
-  tier: number | string
+  tier: number
   name: string
   subtitle: string
   campaign: string
@@ -22,8 +22,8 @@ interface INpcData {
   tag: string
   templates: string[]
   items: INpcItemSaveData[]
-  stats: INpcStats
-  currentStats: INpcStats
+  stats: INpcStats | string
+  currentStats: INpcStats | string
   note: string
   side: string
   cloudImage: string
@@ -57,7 +57,7 @@ class Npc implements IActor, ICloudSyncable {
   private _name: string
   private _subtitle: string
   private _campaign: string
-  private _tier: string | number
+  private _tier: number
   private _class: NpcClass
   private _side: EncounterSide
   private _templates: NpcTemplate[]
@@ -85,7 +85,7 @@ class Npc implements IActor, ICloudSyncable {
     this._id = uuid()
     this._name = `New NPC`
     this._subtitle = ''
-    this._tier = t
+    this._tier = Number(t)
     this._templates = []
     this._user_labels = []
     this.Sections = []
@@ -117,7 +117,6 @@ class Npc implements IActor, ICloudSyncable {
     npcClass.BaseFeatures.forEach(f => {
       this._items.push(new NpcItem(f, tier))
     })
-
   }
 
   public get Active(): boolean {
@@ -151,10 +150,12 @@ class Npc implements IActor, ICloudSyncable {
     this._id = uuid()
   }
 
+  // DEPRECATED
   public get Power(): number {
     // TODO: calc stat power for custom
-    const multiplier = typeof this.Tier === 'number' ? this.Tier : 3.5
-    return (this.Class.Power + this.Templates.reduce((a, b) => +a + +b.Power, 0)) * multiplier
+    // const multiplier = typeof this.Tier === 'number' ? this.Tier : 3.5
+    // return (this.Class.Power + this.Templates.reduce((a, b) => +a + +b.Power, 0)) * multiplier
+    return 0
   }
 
   public get PowerTier(): number {
@@ -228,6 +229,7 @@ class Npc implements IActor, ICloudSyncable {
   }
 
   public get IsBiological(): boolean {
+    if (!this._tag) return false
     return this._tag.toLowerCase() === 'biological'
   }
 
@@ -253,30 +255,29 @@ class Npc implements IActor, ICloudSyncable {
     return this._user_labels.join(', ')
   }
 
-  public get Tier(): number | string {
+  public get Tier(): number {
     return this._tier
   }
+
 
   public get TierIcon(): number | string {
     if (this.IsCustomTier) return 'mdi-star-circle-outline'
     return `cci-rank-${this.Tier}`
   }
 
-  public set Tier(newTier: number | string) {
+  public set Tier(newTier: number) {
     this._tier = newTier
-    if (typeof newTier === 'number') {
-      this._stats = NpcStats.FromClass(this.Class, newTier)
-      this._items.forEach(i => {
-        i.Tier = newTier
-      })
-      this.RecalcBonuses()
-    }
+    this._stats = NpcStats.FromClass(this.Class, newTier)
+    this._items.forEach(i => {
+      i.Tier = newTier
+    })
+    this.RecalcBonuses()
     this.save()
   }
 
-
+  // DEPRECATED
   public get IsCustomTier(): boolean {
-    return this._tier === 'custom'
+    return false
   }
 
   public get Class(): NpcClass {
@@ -295,12 +296,24 @@ class Npc implements IActor, ICloudSyncable {
     return this.BaseClassFeatures.concat(this.BaseTemplateFeatures)
   }
 
+  public get OptionalClassFeatures(): NpcFeature[] {
+    return this.Class.OptionalFeatures
+  }
+
+  public get OptionalTemplateFeatures(): NpcFeature[] {
+    return this._templates.flatMap(x => x.OptionalFeatures)
+  }
+
+  public get OptionalFeatures(): NpcFeature[] {
+    return this.OptionalClassFeatures.concat(this.OptionalTemplateFeatures)
+  }
+
   public get SelectedFeatures(): NpcFeature[] {
     return this.Items.map(x => x.Feature)
   }
 
   public get Features(): NpcFeature[] {
-    return this.BaseFeatures.concat(this.SelectedFeatures)
+    return this.BaseFeatures.concat(this.OptionalFeatures)
   }
 
   public get AvailableFeatures(): NpcFeature[] {
@@ -308,6 +321,8 @@ class Npc implements IActor, ICloudSyncable {
       this._templates.flatMap(x => x.OptionalFeatures)
     ).filter(x => !this.SelectedFeatures.some(y => y.ID === x.ID))
   }
+
+  // -- Templates ---------------------------------------------------------------------------------
 
   public get Templates(): NpcTemplate[] {
     return this._templates
@@ -331,6 +346,62 @@ class Npc implements IActor, ICloudSyncable {
       temp.OptionalFeatures.forEach(f => this.RemoveFeature(f, true))
       this.RecalcBonuses()
     }
+  }
+
+  public get TemplateFeaturesCount(): { template: NpcTemplate, required: number, allowed: number }[] {
+    const out = []
+    this.Templates.forEach(template => {
+      let required = 0
+      let allowed = 0
+      if (template.OptionalMin || template.OptionalMax) {
+        required = template.ForceOptional ? template.OptionalMin * (template.OptionalPerTier ? this.Tier : 1) : 0
+        allowed = !template.ForceOptional ? template.OptionalMax * (template.OptionalPerTier ? this.Tier : 1) : 0
+      }
+      out.push({
+        template,
+        required,
+        allowed
+      })
+    });
+    return out
+  }
+
+  public get TemplateFeaturesSelected(): { template: NpcTemplate, count: number }[] {
+    const out = []
+    this.Templates.forEach(template => {
+      out.push({
+        template,
+        count: this.SelectedFeatures.filter(x => x.Origin.ID === template.ID && x.Origin.Optional).length
+      })
+    });
+    return out
+  }
+
+  public get TemplateFeaturesRemaining(): { template: NpcTemplate, required: number, allowed: number }[] {
+    const out = []
+    this.TemplateFeaturesCount.forEach(item => {
+      out.push({
+        template: item.template,
+        required: item.required - this.TemplateFeaturesSelected.find(x => x.template.ID === item.template.ID).count,
+        allowed: item.allowed - this.TemplateFeaturesSelected.find(x => x.template.ID === item.template.ID).count
+      })
+    });
+    return out
+  }
+
+  public get TemplateFeatureAlerts(): { severity: string, message: string }[] {
+    const out = []
+    this.TemplateFeaturesRemaining.forEach(item => {
+      if (item.required > 0)
+        out.push({ severity: 'error', message: `${item.required} additional optional ${item.template.Name} feature${item.required > 1 ? 's' : ''} must be selected` })
+      if (item.allowed > 0)
+        out.push({ severity: 'warning', message: `${item.allowed} additional optional ${item.template.Name} feature${item.allowed > 1 ? 's' : ''} may be selected` })
+    });
+    const selectedOptional = this.SelectedFeatures.filter(x => x.Origin.Optional).length
+    const optionalSelectTemplates = this.Templates.filter(x => x.AllowOptional).map(x => x.Name)
+    const selectedString = `${this.Class.Name}${optionalSelectTemplates.length ? `/${optionalSelectTemplates.join('/')}` : ''}`
+    if (selectedOptional < 2) out.push({ severity: 'warning', message: `${2 - selectedOptional} additional optional ${selectedString} feature${2 - selectedOptional > 1 ? 's' : ''} may be selected` })
+    return out
   }
 
   setStatBonuses(): void {
@@ -364,7 +435,7 @@ class Npc implements IActor, ICloudSyncable {
 
   public AddFeature(feat: NpcFeature, skipRecalc?: boolean): void {
     const t = typeof this.Tier === 'number' ? this.Tier : 1
-    const item = new NpcItem(feat, t)
+    const item = new NpcItem(feat, t, this.Templates.find(x => x.OptionalFeatures.some(y => y.ID === feat.ID)))
     this._items.push(item)
     if (!skipRecalc) this.RecalcBonuses()
   }
@@ -375,6 +446,19 @@ class Npc implements IActor, ICloudSyncable {
       this._items.splice(j, 1)
       if (!skipRecalc) this.RecalcBonuses()
     }
+  }
+
+  public ResetFeatures() {
+    this._items.splice(0, this._items.length)
+    this.Class.BaseFeatures.forEach(f => {
+      this._items.push(new NpcItem(f, this.Tier))
+    })
+    this.Templates.forEach(t => {
+      t.BaseFeatures.forEach(f => {
+        this._items.push(new NpcItem(f, this.Tier))
+      })
+    });
+    this.save()
   }
 
   public get Items(): NpcItem[] {
@@ -653,6 +737,10 @@ class Npc implements IActor, ICloudSyncable {
     return `cci-size-${this.Stats.Size === 0.5 ? 'half' : this.Stats.Size}`
   }
 
+  public get ItemType(): string {
+    return 'NPC'
+  }
+
   // -- Cloud -------------------------------------------------------------------------------------
 
   public MarkSync(): void {
@@ -689,8 +777,8 @@ class Npc implements IActor, ICloudSyncable {
       tag: npc._tag,
       templates: npc.Templates.map(x => x.ID),
       items: npc._items.map(x => NpcItem.Serialize(x)),
-      stats: NpcStats.Serialize(npc._stats),
-      currentStats: NpcStats.Serialize(npc._current_stats),
+      stats: npc.Class ? NpcStats.Serialize(npc._stats) : '',
+      currentStats: npc.Class ? NpcStats.Serialize(npc._current_stats) : '',
       note: npc._note,
       side: npc.Side,
       cloudImage: npc._cloud_image,
@@ -731,13 +819,13 @@ class Npc implements IActor, ICloudSyncable {
     this._tag = data.tag
     this._templates = data.templates.map(x => store.getters.referenceByID('NpcTemplates', x))
     this._items = data.items.map(x => NpcItem.Deserialize(x))
-    this._stats = NpcStats.Deserialize(data.stats)
+    if (data.stats) this._stats = NpcStats.Deserialize(data.stats as INpcStats)
     this.RecalcBonuses(false)
     this._note = data.note
     this._cloud_image = data.cloudImage
     this._local_image = data.localImage
-    this._current_stats = data.currentStats
-      ? NpcStats.Deserialize(data.currentStats)
+    if (data.currentStats || data.stats) this._current_stats = data.currentStats
+      ? NpcStats.Deserialize(data.currentStats as INpcStats)
       : NpcStats.FromMax(this._stats)
     this._statuses = data.statuses || []
     this._conditions = data.conditions || []

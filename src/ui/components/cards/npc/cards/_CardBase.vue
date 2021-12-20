@@ -1,31 +1,33 @@
 <template>
-  <v-card flat tile class="my-1" color="transparent">
-    <v-card-title :class="`${item.Feature.Color} sliced pa-0`">
-      <div class="heading h3 flavor-text white--text pa-0 ml-2">
+  <v-card flat tile class="my-1" color="transparent" :height="fullHeight ? '100%' : ''">
+    <v-badge :content="`T${item.Tier}`" bordered overlap style="width: 100%">
+      <v-toolbar :class="item.Feature.Color" dense flat height="30px">
         <item-menu
-          v-if="!readonly && !active"
+          v-if="!active"
           :item="item"
           :active="active"
+          class="ml-n3 mr-2"
           @remove-feature="$emit('remove-feature', $event)"
           @add-reaction="$emit('add-reaction', $event)"
           @recalc="$emit('recalc')"
         />
-        <span v-if="readonly">
-          {{ item.Feature.Name }}
-        </span>
-        <span v-else :style="item.Destroyed ? 'text-decoration: line-through' : ''">
-          {{ item.Name }} (T{{ item.Tier }})
-        </span>
-        <span v-if="!item.Destroyed && !active" class="caption">
-          //{{ item.Feature.Origin.Name }} ({{ item.Feature.Origin.Type }}),
-          {{ item.Feature.Origin.Optional ? 'Optional' : 'Base' }} {{ item.Type }}
-        </span>
-        &emsp;
-      </div>
-    </v-card-title>
+        <div class="heading h3 white--text">
+          <span :style="item.Destroyed ? 'text-decoration: line-through' : ''">
+            {{ item.Name }}
+          </span>
+        </div>
+        <v-spacer />
+        <div class="overline text-right white--text" style="line-height: 11px!important">
+          {{ item.Feature.OriginString }}
+          <cc-tooltip inline :content="item.Feature.LcpName">
+            <v-icon small dark>cci-compendium</v-icon>
+          </cc-tooltip>
+        </div>
+      </v-toolbar>
+    </v-badge>
     <v-card-text
-      :class="`py-1 mt-n1 px-2 text--text ${item.Destroyed ? 'error lighten-1' : 'stark-panel'}`"
-      :style="`border: 1px solid var(--v-${item.Feature.Color}-base)!important`"
+      :class="`py-1 mt-n2 px-2 text--text ${item.Destroyed ? 'error lighten-1' : 'stark-panel'}`"
+      :style="`border: 1px solid var(--v-${item.Feature.Color}-base)!important;`"
     >
       <p
         v-if="item.Description"
@@ -69,6 +71,9 @@
         </v-row>
         <slot name="active-actions" />
       </div>
+      <v-alert v-if="item.Caveat" dense color="panel" class="pa-1 ma-0">
+        <span class="overline">{{ item.Caveat }}</span>
+      </v-alert>
     </v-card-text>
   </v-card>
 </template>
@@ -89,6 +94,9 @@ export default Vue.extend({
       type: Boolean,
     },
     active: {
+      type: Boolean,
+    },
+    fullHeight: {
       type: Boolean,
     },
   },

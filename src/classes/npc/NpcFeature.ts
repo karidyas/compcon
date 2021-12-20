@@ -77,6 +77,10 @@ export abstract class NpcFeature {
     }
   }
 
+  public get OriginString(): string {
+    return `${this.Origin.Optional ? 'Optional' : ''} ${this.Origin.Name} ${this.FeatureType}`
+  }
+
   // public get OriginString(): string {
   //   return `${this._origin.name} ${this._origin.type} - ${
   //     !this._origin.optional ? 'Base' : 'Optional'

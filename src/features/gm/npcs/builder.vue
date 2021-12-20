@@ -24,10 +24,12 @@
       <npc-class-selector :item="item" />
       <npc-tag-selector :item="item" />
     </v-row>
-    <npc-template-selector :item="item" />
-    <v-divider class="my-3" />
-    <npc-tier-selector :item="item" />
-    <npc-stat-editor :item="item" />
+    <div v-if="item.Class">
+      <npc-template-selector :item="item" />
+      <v-divider class="my-3" />
+      <npc-tier-selector :item="item" />
+      <npc-stat-editor :item="item" />
+    </div>
   </v-container>
 </template>
 

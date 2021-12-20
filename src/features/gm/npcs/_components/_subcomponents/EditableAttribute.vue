@@ -2,13 +2,25 @@
   <v-col :cols="cols">
     <v-card tile outlined class="text-center">
       <v-card-title
-        :class="`${color} white--text caption py-1 px-2`"
+        :class="`${color} white--text caption py-1`"
         style="font-weight: bold; max-height: 28px; font-size: 18px!important"
       >
+        <v-btn
+          v-if="editable && !editMode"
+          icon
+          dark
+          x-small
+          class="fadeSelect"
+          absolute
+          @click="editMode = true"
+        >
+          <v-icon>
+            mdi-circle-edit-outline
+          </v-icon>
+        </v-btn>
+        <v-spacer />
         {{ attr }}
-        <v-icon v-if="editable && !editMode" dark small class="fadeSelect" @click="editMode = true">
-          mdi-circle-edit-outline
-        </v-icon>
+        <v-spacer />
       </v-card-title>
       <v-card-text class="pa-1 text--text">
         <v-text-field
@@ -64,6 +76,9 @@ export default Vue.extend({
     model: 0,
     editMode: false,
   }),
+  mounted() {
+    this.model = this.val
+  },
   watch: {
     val() {
       this.model = this.val

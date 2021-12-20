@@ -2,6 +2,7 @@
 
 import { NpcFeature } from './'
 import { store } from '@/store'
+import { NpcTemplate } from './NpcTemplate'
 
 export interface INpcItemSaveData {
   itemID: string
@@ -22,14 +23,17 @@ export class NpcItem {
   private _charged: boolean
   private _uses: number
   private _max_uses: number
+  public readonly Caveat: string
+  public IsVisible: boolean
 
-  public constructor(feature: NpcFeature, tier: number) {
+  public constructor(feature: NpcFeature, tier: number, caveatTemplate?: NpcTemplate) {
     this._feature = feature
     this._tier = tier
     this._flavor_name = this._flavor_description = ''
     this._destroyed = false
     this._charged = true
     this._uses = 0
+    if (caveatTemplate && caveatTemplate.Caveat) this.Caveat = caveatTemplate.Caveat
     const f = feature as any
     if (f.IsLimited) {
       const ltd = f.Tags.find(x => x.IsLimited)
@@ -37,6 +41,7 @@ export class NpcItem {
     } else {
       this._max_uses = 0
     }
+    this.IsVisible = !feature.HideActive
   }
 
   private save(): void {

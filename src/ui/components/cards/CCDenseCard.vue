@@ -1,15 +1,20 @@
 <template>
-  <v-card tile outlined>
+  <v-card tile outlined :style="`border-color: ${item.Color}`" :height="fullHeight ? '100%' : ''">
     <v-toolbar dense :color="item.Color" flat height="30px" class="white--text">
       <span class="heading">
+        <item-menu v-if="showMenu" :item="item" />
         <cc-tooltip inline :content="item.FeatureType">
-          <v-icon left large dark>{{ item.Icon }}</v-icon>
+          <v-icon left dark>{{ item.Icon }}</v-icon>
         </cc-tooltip>
         {{ item.Name }}
       </span>
       <v-spacer />
-
-      <span v-if="item.LcpName" class="flavor-text white--text">{{ item.LcpName }}</span>
+      <div class="overline text-right white--text" style="line-height: 11px!important">
+        {{ item.OriginString }}
+        <cc-tooltip inline :content="item.LcpName">
+          <v-icon small dark>cci-compendium</v-icon>
+        </cc-tooltip>
+      </div>
     </v-toolbar>
     <cc-item-card :item="item" dense />
   </v-card>
@@ -17,13 +22,16 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
+import ItemMenu from './npc/cards/_ItemMenu.vue'
 
-@Component({ name: 'cc-item-dense-card' })
+@Component({ name: 'cc-item-dense-card', components: { ItemMenu } })
 export default class CCItemCard extends Vue {
   @Prop({ type: Object, required: true })
   readonly item
 
   @Prop({ type: Boolean })
-  readonly dense
+  readonly showMenu
+  @Prop({ type: Boolean })
+  readonly fullHeight
 }
 </script>

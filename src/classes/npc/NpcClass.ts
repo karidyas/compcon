@@ -25,8 +25,6 @@ export class NpcClass {
     tactics: string
   }
   private _stats: NpcClassStats
-  private _base_features: string[]
-  private _optional_features: string[]
   private _power: number
   private _brew: string
 
@@ -37,8 +35,6 @@ export class NpcClass {
     this._info = data.info
     this._stats = new NpcClassStats(data.stats)
     this._power = data.power
-    this._base_features = data.base_features
-    this._optional_features = data.optional_features
     this._brew = data.brew || 'CORE'
     this.LcpName = packName || 'Lancer CORE NPCs'
     this.InLcp = this.LcpName != 'Lancer CORE NPCs' ? true : false

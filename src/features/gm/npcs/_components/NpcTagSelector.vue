@@ -3,7 +3,7 @@
     <v-menu offset-y>
       <template v-slot:activator="{ on }">
         <v-btn large block color="protocol" class="white--text" v-on="on">
-          {{ item.Tag }}
+          {{ item.Tag ? item.Tag : 'Set NPC Tag' }}
         </v-btn>
       </template>
       <v-card max-width="40vw">

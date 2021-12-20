@@ -21,7 +21,7 @@
           <v-col cols="2" class="ml-auto">
             <v-select
               v-model="grouping"
-              :items="['None', 'Campaigns', 'Labels', 'Class', 'Tier']"
+              :items="['None', 'Labels', 'Class', 'Tier']"
               label="Group By"
               hide-details
               outlined
@@ -31,7 +31,7 @@
           <v-col cols="2">
             <v-select
               v-model="sorting"
-              :items="['Name', 'Campaigns', 'Labels', 'Class', 'Tier']"
+              :items="['Name', 'Labels', 'Class', 'Tier']"
               label="Sort By"
               hide-details
               outlined
@@ -98,12 +98,12 @@
         </v-btn>
       </v-col>
     </v-row>
-    <v-footer fixed>
+    <!-- <v-footer fixed>
       <v-btn small to="/gm">
         <v-icon left>mdi-chevron-left</v-icon>
         Return to GM Menu
       </v-btn>
-    </v-footer>
+    </v-footer> -->
   </v-container>
 </template>
 

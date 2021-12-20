@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <npc-feature-alerts :item="item" />
-    <npc-feature-selector :item="item" />
+    <npc-feature-selector :npc="item" />
   </v-container>
 </template>
 

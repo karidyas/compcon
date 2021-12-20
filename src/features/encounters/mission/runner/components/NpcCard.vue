@@ -309,7 +309,6 @@
       <v-col v-for="(i, idx) in npc.Items" :key="i.Feature.ID + idx" md="12" lg="6" xl="4">
         <cc-npc-item-card
           :item="i"
-          active
           @remove-feature="npc.RemoveFeature(i.Feature)"
           @recalc="npc.RecalcBonuses()"
           @add-reaction="npc.AddReaction($event)"

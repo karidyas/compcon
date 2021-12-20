@@ -1,5 +1,18 @@
 <template>
-  <div>npc feature alerts</div>
+  <v-container>
+    <v-alert
+      v-for="(alert, i) in item.TemplateFeatureAlerts"
+      :key="`${alert}_${i}`"
+      dense
+      prominent
+      outlined
+      :color="alert.severity"
+      icon="mdi-alert"
+      class="heading h3"
+    >
+      {{ alert.message }}
+    </v-alert>
+  </v-container>
 </template>
 
 <script lang="ts">

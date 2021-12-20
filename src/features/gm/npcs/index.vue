@@ -2,7 +2,7 @@
   <div>
     <gm-collection-view
       title="NPCs"
-      item-type="NPC"
+      item-type="Npc"
       :items="npcs"
       @add-new="addNew()"
       @open="openItem($event)"
@@ -15,7 +15,7 @@
           @exit="dialog = false"
           @copy="copyItem()"
           @deleteItem="deleteItem()"
-          @save="saveAndClose()"
+          @save="SaveAndClose()"
         >
           <builder slot="upper" :item="selected" />
           <features slot="lower" :item="selected" />
@@ -39,7 +39,6 @@ export default Vue.extend({
   name: 'npc-roster',
   components: { GmCollectionView, Editor, Builder, Features },
   data: () => ({
-    id: '',
     dialog: false,
     selected: null,
   }),
@@ -51,18 +50,21 @@ export default Vue.extend({
   },
   methods: {
     openItem(id) {
-      this.id = id
+      this.selected = getModule(NpcStore, this.$store).Npcs.find(x => x.ID === id)
       this.dialog = true
     },
     addNew() {
-      const store = getModule(CompendiumStore, this.$store)
+      // const store = getModule(CompendiumStore, this.$store)
 
-      this.selected = new Npc(store.NpcClasses[0])
+      this.selected = new Npc()
       this.dialog = true
     },
     SaveAndClose() {
+      const store = getModule(NpcStore, this.$store)
       // TODO: check for and ask to update instances on save
-      console.log('not yet implemented')
+      store.addNpc(this.selected)
+      this.$set(this, 'selected', null)
+      this.dialog = false
     },
   },
 })
