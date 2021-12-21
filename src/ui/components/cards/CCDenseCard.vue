@@ -1,5 +1,11 @@
 <template>
-  <v-card tile outlined :style="`border-color: ${item.Color}`" :height="fullHeight ? '100%' : ''">
+  <v-card
+    tile
+    outlined
+    :style="`border-color: ${hexColor}`"
+    class="light-panel"
+    :height="fullHeight ? '100%' : ''"
+  >
     <v-toolbar dense :color="item.Color" flat height="30px" class="white--text">
       <span class="heading">
         <item-menu v-if="showMenu" :item="item" />
@@ -21,11 +27,12 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Component, Prop, Mixins } from 'vue-property-decorator'
 import ItemMenu from './npc/cards/_ItemMenu.vue'
+import GetColorMixin from '@/mixins/getColor'
 
 @Component({ name: 'cc-item-dense-card', components: { ItemMenu } })
-export default class CCItemCard extends Vue {
+export default class CCDenseItemCard extends Mixins(GetColorMixin) {
   @Prop({ type: Object, required: true })
   readonly item
 
@@ -33,5 +40,9 @@ export default class CCItemCard extends Vue {
   readonly showMenu
   @Prop({ type: Boolean })
   readonly fullHeight
+
+  get hexColor(): string {
+    return this.getColor(this.item.Color, this.$vuetify)
+  }
 }
 </script>

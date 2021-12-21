@@ -32,7 +32,7 @@ import Editor from './editor.vue'
 import Builder from './builder.vue'
 import Features from './features.vue'
 import { getModule } from 'vuex-module-decorators'
-import { CompendiumStore, NpcStore } from '@/store'
+import { NpcStore } from '@/store'
 import { Npc } from '@/class'
 
 export default Vue.extend({

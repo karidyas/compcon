@@ -6,6 +6,7 @@
       :item="item"
       :big="big"
       :list="list"
+      :odd="odd"
       @open="$emit('open')"
     />
     <component
@@ -13,6 +14,7 @@
       :is="cardComponent"
       :item="item"
       :big="big"
+      :odd="odd"
       :list="list"
       @open="$emit('open')"
     />
@@ -28,6 +30,7 @@ export default Vue.extend({
     item: { type: Object, required: true },
     big: { type: Boolean },
     list: { type: Boolean },
+    odd: { type: Boolean },
   },
   computed: {
     cardComponent() {

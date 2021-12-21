@@ -15,7 +15,7 @@
         <v-scroll-y-reverse-transition>
           <v-menu v-if="selected.length" offset-x left bottom>
             <template v-slot:activator="{ on }">
-              <v-btn icon color="error" class="fadeSelect my-1 mx-2" v-on="on">
+              <v-btn color="error" class="my-1 mx-2" v-on="on">
                 <v-icon>mdi-delete</v-icon>
               </v-btn>
             </template>
@@ -35,7 +35,7 @@
           </v-menu>
         </v-scroll-y-reverse-transition>
       </template>
-      <template v-slot:[`item.Campaigns`]="{ item }">
+      <!-- <template v-slot:[`item.Campaigns`]="{ item }">
         <v-chip
           v-for="c in item.Campaigns"
           :key="`${item.ID}_campaign_${c}`"
@@ -46,16 +46,12 @@
         >
           {{ c }}
         </v-chip>
+      </template> -->
+      <template v-slot:[`item.Templates`]="{ item }">
+        {{ item.Templates.map(x => x.Name).join(' / ') }}
       </template>
       <template v-slot:[`item.Labels`]="{ item }">
-        <v-chip
-          v-for="l in item.Labels"
-          :key="`${item.ID}_label_${l}`"
-          small
-          color="primary"
-          label
-          class="mr-1"
-        >
+        <v-chip v-for="l in item.Labels" :key="`${item.ID}_label_${l}`" small outlined class="mr-1">
           {{ l }}
         </v-chip>
       </template>
@@ -73,9 +69,11 @@
 import Vue from 'vue'
 import _ from 'lodash'
 import * as headers from './_components/gmItemHeaders'
+import { getModule } from 'vuex-module-decorators'
+import { NpcStore } from '@/store'
 
 export default Vue.extend({
-  name: 'item-card-grid',
+  name: 'item-table',
   data: () => ({
     selected: [],
   }),
@@ -106,7 +104,8 @@ export default Vue.extend({
     },
     deleteAllSelected() {
       this.selected.forEach(e => {
-        e.delete()
+        const store = getModule(NpcStore, this.$store)
+        store[`delete${this.ItemType}`](this.selected)
       })
     },
   },

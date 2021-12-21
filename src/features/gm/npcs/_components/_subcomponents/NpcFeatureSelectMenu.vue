@@ -8,9 +8,9 @@
         </v-btn>
       </v-col>
     </v-row>
-    <v-dialog v-model="dialog" fullscreen>
+    <v-dialog v-model="dialog" fullscreen style="overflow-y: hidden">
       <v-card>
-        <v-toolbar flat dense color="blue-grey darken-4" class="white--text">
+        <v-toolbar flat tile dense color="blue-grey darken-4" class="white--text">
           Set NPC Features
           <v-spacer />
           <cc-tooltip
@@ -26,7 +26,7 @@
         </v-toolbar>
         <v-row no-gutters>
           <v-col cols="3" style="max-width: 325px!important">
-            <v-list dense nav class="side-fixed" color="panel">
+            <v-list dense nav class="side-fixed mt-n1" color="panel">
               <v-list-item color="accent" selectable @click="featureSet = 'all'">
                 <v-list-item-icon>
                   <v-icon>cci-npc-feature</v-icon>
@@ -133,9 +133,10 @@
                 </v-list-item>
               </v-list-group>
             </v-list>
+            <div style="height: 20px" />
           </v-col>
 
-          <v-col class="pr-8">
+          <v-col class="pl-6 pr-8">
             <v-container style="height: calc(100vh - 35px)!important; overflow-y: scroll">
               <v-row dense align="start" class="mt-n3">
                 <v-col>
@@ -190,7 +191,7 @@
                   </v-btn>
                   <v-btn
                     v-if="hasItem(f)"
-                    color="warning"
+                    color="warning darken-1"
                     class="white--text"
                     block
                     outlined
@@ -293,7 +294,7 @@ export default Vue.extend({
 
 <style scoped>
 .side-fixed {
-  height: calc(100vh - 51.5px);
+  height: calc(100vh - 45px);
   overflow-y: scroll;
   top: 51.5px;
   bottom: 0;
