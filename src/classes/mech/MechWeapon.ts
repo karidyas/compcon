@@ -76,13 +76,14 @@ class WeaponProfile extends CompendiumItem {
   public constructor(
     pData: IWeaponProfileData | IMechWeaponData,
     container: MechWeapon,
+    packTags?: ITagCompendiumData[],
     idx?: number
   ) {
     const data = Object.assign({}, pData) as ICompendiumItemData
     if (!data.id) data.id = container.ID
     data.id += `_profile_${idx || 0}`
-    super(data)
-    this.Cost = pData.cost || 1
+    super(data, packTags)
+    this.Cost = parseInt(pData.cost as any) || 1
     this.Barrage = pData.barrage != undefined ? pData.barrage : container.Barrage
     this.Skirmish = pData.skirmish != undefined ? pData.skirmish : container.Skirmish
     if (pData.damage) this.Damage = pData.damage.map(x => new Damage(x))
@@ -115,14 +116,16 @@ class MechWeapon extends MechEquipment {
     this.Barrage = data.barrage != undefined ? data.skirmish : true
     this.NoAttack = data.no_attack
     this.NoCoreBonus = data.no_core_bonus
-    if (data.profiles) {
-      this.Profiles = data.profiles.map((x, i) => new WeaponProfile(x, this, i))
+    if (data.profiles && data.profiles.length) {
+      this.Profiles = data.profiles.map((x, i) => new WeaponProfile(x, this, packTags, i))
     } else {
-      this.Profiles = [new WeaponProfile(data, this)]
+      this.Profiles = [new WeaponProfile(data, this, packTags)]
     }
     this._selected_profile = 0
     this._mod = null
     this.ItemType = ItemType.MechWeapon
+    this.max_use_override = 0
+    this._custom_damage_type = null
   }
 
   public get TotalSP(): number {
@@ -196,7 +199,7 @@ class MechWeapon extends MechEquipment {
 
   public get ProfileHeatCost(): number {
     const selfHeatTag = this.ProfileTags.find(x => x.IsHeatCost)
-    return selfHeatTag ? (selfHeatTag.Value as number) : 0
+    return Number(selfHeatTag ? selfHeatTag.Value : 0)
   }
 
   public get ProfileActions(): Action[] {
@@ -231,9 +234,17 @@ class MechWeapon extends MechEquipment {
   }
 
   public set MaxUseOverride(val: number) {
-    this.max_use_override = val
-    this._uses = val
+    const safeVal = MechWeapon.SanitizeUsesInput(val)
+    this.max_use_override = safeVal
+    this._missing_uses = 0
     this.save()
+  }
+
+  public static SanitizeUsesInput(val: number): number {
+    // Prevent Uses icon overflow - set reasonable limit on maximum uses
+    const absoluteMax = 25
+    const absoluteMin = 0
+    return Math.max(Math.min(val, absoluteMax), absoluteMin)
   }
 
   public get DamageType(): DamageType[] {
@@ -271,7 +282,6 @@ class MechWeapon extends MechEquipment {
   public static Serialize(item: MechWeapon): IMechWeaponSaveData {
     return {
       id: item.ID,
-      uses: item.Uses || 0,
       destroyed: item.Destroyed,
       cascading: item.IsCascading,
       loaded: item.Loaded,
@@ -280,14 +290,14 @@ class MechWeapon extends MechEquipment {
       flavorName: item._flavor_name,
       flavorDescription: item._flavor_description,
       customDamageType: item._custom_damage_type || null,
-      maxUseOverride: item.max_use_override || 0,
+      maxUseOverride: MechWeapon.SanitizeUsesInput(item.max_use_override) || 0,
+      uses: MechWeapon.SanitizeUsesInput(item.Uses) || 0,
       selectedProfile: item._selected_profile || 0,
     }
   }
 
   public static Deserialize(data: IMechWeaponSaveData): MechWeapon {
     const item = store.getters.instantiate('MechWeapons', data.id) as MechWeapon
-    item._uses = data.uses || 0
     item._destroyed = data.destroyed || false
     item._cascading = data.cascading || false
     item._loaded = data.loaded || true
@@ -296,7 +306,8 @@ class MechWeapon extends MechEquipment {
     item._flavor_name = data.flavorName
     item._flavor_description = data.flavorDescription
     item._custom_damage_type = data.customDamageType || null
-    item.max_use_override = data.maxUseOverride || 0
+    item.max_use_override = MechWeapon.SanitizeUsesInput(data.maxUseOverride) || 0
+    item.Uses = MechWeapon.SanitizeUsesInput(data.uses) || 0
     item._selected_profile = data.selectedProfile || 0
     return item
   }

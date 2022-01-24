@@ -1,8 +1,9 @@
 <template>
   <cc-stepper-content
-    :complete="selected !== null"
+    :complete="selectionComplete"
     exit="pilot_management"
     back
+    mandatory
     @back="$emit('back')"
     @complete="setTemplate()"
   >
@@ -88,6 +89,14 @@ export default Vue.extend({
     retrogradeLogo() {
       return getImagePath(ImageTag.Misc, 'retrograde_logo.png')
     },
+    selectionComplete(): boolean {
+      return this.selected !== null
+    }
+  },
+  watch: {
+    selectionComplete(bool) {
+      if (bool) window.scrollTo(0, document.body.scrollHeight)
+    },
   },
   methods: {
     item(type: string, id: string) {
@@ -134,7 +143,7 @@ export default Vue.extend({
         this.pilot.RemoveMech(m)
       })
       this.pilot.AddMech(mech)
-      this.pilot.State.ActiveMech = mech
+      this.pilot.ActiveMech = mech
 
       this.$emit('next')
     },

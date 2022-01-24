@@ -8,9 +8,8 @@ interface IPilotEquipmentData extends ICompendiumItemData {
 }
 
 abstract class PilotEquipment extends CompendiumItem {
-  protected current_uses: number
   protected _custom_damage_type?: string
-  protected _uses: number
+  protected _missing_uses: number
   protected _destroyed: boolean
   protected _cascading: boolean
   protected _loaded: boolean
@@ -52,10 +51,12 @@ abstract class PilotEquipment extends CompendiumItem {
       this.IsOrdnance = data.tags.some(x => x.id === 'tg_ordnance')
       this.CanSetDamage = data.tags.some(x => x.id === 'tg_set_damage_type')
       this.CanSetUses = data.tags.some(x => x.id === 'tg_set_max_uses')
+      this.max_use_override = this.CanSetUses ? 0 : null
     } else {
       this._max_uses = 0
+      this.max_use_override = null
     }
-    this._uses = this._max_uses
+    this._missing_uses = 0
   }
 
   public Use(cost?: number): void {
@@ -139,22 +140,25 @@ abstract class PilotEquipment extends CompendiumItem {
   }
 
   public get Uses(): number {
-    return this._uses
+    return this.MaxUses - this._missing_uses
   }
 
   public set Uses(val: number) {
-    this._uses = val
+    this._missing_uses = this.MaxUses - val
     this.save()
   }
 
+  public get MissingUses(): number {
+    return this._missing_uses
+  }
+
   public get MaxUses(): number {
-    if (this.max_use_override) return this.max_use_override
-    return this._max_uses
+    return this.max_use_override !== null ? this.max_use_override : this._max_uses
   }
 
   public getTotalUses(bonus?: number): number {
     const b = bonus ? bonus : 0
-    return this.MaxUses + b
+    return this.max_use_override !== null ? this.max_use_override : this._max_uses + b
   }
 
   public static Serialize(item: PilotEquipment | null): IEquipmentData | null {
@@ -162,7 +166,7 @@ abstract class PilotEquipment extends CompendiumItem {
     return {
       id: item.ID,
       destroyed: false,
-      uses: item.current_uses,
+      uses: item.Uses,
       cascading: false,
       note: item.Note,
       flavorName: item._flavor_name,
@@ -174,7 +178,7 @@ abstract class PilotEquipment extends CompendiumItem {
   public static Deserialize(itemData: IEquipmentData | null): PilotEquipment | null {
     if (!itemData) return null
     const item = store.getters.instantiate('PilotGear', itemData.id)
-    item.current_uses = itemData.uses
+    item.Uses = itemData.uses
     item._note = itemData.note
     item._flavor_name = itemData.flavorName
     item._flavor_description = itemData.flavorDescription

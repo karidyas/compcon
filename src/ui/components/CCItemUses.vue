@@ -2,7 +2,7 @@
   <div class="mt-n2">
     <v-btn
       v-for="n in max"
-      :key="`chk_${item.ID}-${n}_of_${item.MaxUses}`"
+      :key="`chk_${item.ID}-${n}_of_${max}`"
       class="d-inline my-0 mx-n1 pa-0"
       icon
       :small="small"
@@ -41,7 +41,7 @@ export default class CCItemUses extends Vue {
   readonly bonus: number
 
   get max(): number {
-    return this.item.MaxUses + this.bonus
+    return this.item.getTotalUses(this.bonus)
   }
   get current(): number {
     return this.item.Uses

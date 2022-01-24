@@ -1,6 +1,7 @@
 <template>
   <cc-stepper-content
     :complete="canContinue"
+    :mandatory="!quickstart"
     exit="pilot_management"
     back
     @back="$emit('back')"
@@ -37,7 +38,7 @@
         </v-alert>
       </v-container>
     </div>
-    <cc-mech-skills-selector :pilot="pilot" />
+    <cc-mech-skills-selector level-up :pilot="pilot" />
   </cc-stepper-content>
 </template>
 
@@ -51,6 +52,7 @@ export default Vue.extend({
       type: Object,
       required: true,
     },
+    quickstart: { type: Boolean },
   },
   computed: {
     canContinue(): boolean {

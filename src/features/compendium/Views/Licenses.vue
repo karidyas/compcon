@@ -1,8 +1,8 @@
 <template>
   <v-container px-5>
-    <h1  class="heading">LICENSES</h1>
+    <h1 class="heading">LICENSES</h1>
     <v-row v-for="m in Object.keys(licenses)" :key="m">
-      <v-col class="text-center pa-3">
+      <v-col v-if="manufacturer(m)" class="text-center pa-3">
         <div>
           <cc-logo
             :source="manufacturer(m)"
@@ -47,8 +47,8 @@
                 :id="$vuetify.breakpoint.mdAndDown ? 'img-mobile' : 'img-hover'"
                 :src="frame(l.FrameID).DefaultImage"
                 max-height="100%"
-                :position="`top ${frame(l.FrameID).YPosition}% left 20vw`"
-                style="position:absolute; top: 0; right: 0;"
+                :position="`top ${frame(l.FrameID).YPosition}% left 80px`"
+                style="position: absolute; top: 0; right: 0"
               />
             </v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -78,6 +78,7 @@ export default Vue.extend({
   methods: {
     manufacturer(id: string) {
       const compendium = getModule(CompendiumStore, this.$store)
+      console.log(compendium.Manufacturers)
       return compendium.Manufacturers.find(x => x.ID === id)
     },
     frame(id: string) {

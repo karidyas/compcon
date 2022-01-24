@@ -56,7 +56,7 @@
             <span>{{ item.SP }}SP</span>
           </div>
         </v-col>
-        <v-col v-if="!intWeapon && !readonly" cols="auto">
+        <v-col v-if="!readonly" cols="auto">
           <div class="pl-3 ml-3" style=" border-left: 1px solid #616161;">
             <v-icon v-if="item" :small="small" dark class="fadeSelect mt-n1" @click.stop="remove()">
               delete
@@ -262,6 +262,8 @@ export default Vue.extend({
       this.$refs.lockDialog.show()
     },
     finalizeSuperheavy(lockTarget: EquippableMount) {
+      if (this.item && this.item.Size === WeaponSize.Superheavy)
+        this.mech.ActiveLoadout.UnequipSuperheavy()
       lockTarget.Lock(this.mount)
       this.weaponSlot.EquipWeapon(this.stagedSH, this.mech.Pilot)
       this.$refs.lockDialog.hide()

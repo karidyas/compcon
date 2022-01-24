@@ -3,9 +3,11 @@
     <v-menu
       open-on-hover
       :close-on-content-click="false"
-      bottom
+      top
+      nudge-top="10px"
       offset-y
       open-delay="100"
+      close-delay="50"
       max-width="80vw"
       min-width="50vw"
     >
@@ -26,6 +28,7 @@
         <v-toolbar flat dense tile color="primary">
           <span class="heading h3 white--text">{{ talent.Name }}</span>
           <v-spacer />
+          <span v-if="talent.InLcp" class="heading h3 white--text mr-3">{{ talent.LcpName }}</span>
           <cc-tooltip v-if="hideLocked" :content="`${showAll ? 'Hide' : 'Show'} All`">
             <v-btn small icon class="fadeSelect" @click="showAll = !showAll">
               <v-icon small>mdi-eye</v-icon>
@@ -71,7 +74,7 @@
               </v-toolbar>
               <v-card-text style="min-height: 100%">
                 <talent-rank-contents
-                  :talentRank="talent.Rank(n)"
+                  :talent-rank="talent.Rank(n)"
                   :unlocked="!rank || parseInt(rank) >= (selectable ? n - 1 : n)"
                 />
               </v-card-text>
@@ -120,8 +123,8 @@ import Vue from 'vue'
 import TalentRankContents from './_TalentRankContents.vue'
 import TalentEmblem from './_TalentEmblem.vue'
 export default Vue.extend({
-  components: { TalentRankContents, TalentEmblem },
   name: 'talent-small',
+  components: { TalentRankContents, TalentEmblem },
   props: {
     hideLocked: { type: Boolean },
     talent: { type: Object, required: true },

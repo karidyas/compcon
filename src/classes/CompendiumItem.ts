@@ -26,6 +26,7 @@ abstract class CompendiumItem {
   public ItemType: ItemType
   public readonly Brew: string
   public readonly LcpName: string
+  public readonly InLcp: boolean
   public readonly ID: string
   public readonly Actions: Action[]
   public readonly Bonuses: Bonus[]
@@ -60,12 +61,13 @@ abstract class CompendiumItem {
       this._description = data.description || ''
       this.Brew = data.brew || 'Core'
       this.LcpName = packName || 'LANCER Core Book'
+      this.InLcp = packName ? true : false
       this._baseTags = Tag.Deserialize(data.tags, packTags)
       this.IsExotic = this._baseTags.some(x => x.IsExotic)
       const heatTag = this.Tags.find(x => x.IsHeatCost)
-      const heatCost = heatTag ? heatTag.Value : 0
+      const heatCost = Number(heatTag ? heatTag.Value : 0)
       this.Actions = data.actions
-        ? data.actions.map(x => new Action(x, data.name, heatCost as number))
+        ? data.actions.map(x => new Action(x, data.name, heatCost))
         : []
       this.Bonuses = data.bonuses ? data.bonuses.map(x => new Bonus(x)) : []
       this.Synergies = data.synergies ? data.synergies.map(x => new Synergy(x, data.name)) : []
@@ -90,7 +92,7 @@ abstract class CompendiumItem {
   }
 
   protected save(): void {
-    store.dispatch('saveData')
+    store.dispatch('setPilotsDirty')
   }
 
   public get Name(): string {

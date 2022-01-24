@@ -24,7 +24,7 @@
         <v-alert v-if="item.ProfileEffect" dense outlined color="active" class="mt-2">
           <div class="mb-n2 mt-n2">
             <div class="overline stark--text my-n2">EFFECT</div>
-            <p class="text--text body-text mb-1 mr-2 ml-3" v-html-safe="item.ProfileEffect" />
+            <p v-html-safe="item.ProfileEffect" class="text--text body-text mb-1 mr-2 ml-3" />
           </div>
         </v-alert>
         <v-alert
@@ -37,7 +37,7 @@
         >
           <div class="my-n2">
             <div class="overline stark--text my-n2">ON ATTACK</div>
-            <p class="text--text body-text mb-1" v-html-safe="item.ProfileOnAttack" />
+            <p v-html-safe="item.ProfileOnAttack" class="text--text body-text mb-1" />
           </div>
         </v-alert>
       </v-col>
@@ -54,7 +54,7 @@
         >
           <div class="mb-n2">
             <div class="overline stark--text my-n2">ON HIT</div>
-            <p class="text--text body-text mb-1" v-html-safe="item.ProfileOnHit" />
+            <p v-html-safe="item.ProfileOnHit" class="text--text body-text mb-1" />
           </div>
         </v-alert>
         <v-alert
@@ -70,7 +70,7 @@
           </v-icon>
           <div class="mb-n2">
             <div class="overline stark--text my-n2">ON CRITICAL HIT</div>
-            <p class="text--text body-text mb-1" v-html-safe="item.ProfileOnCrit" />
+            <p v-html-safe="item.ProfileOnCrit" class="text--text body-text mb-1" />
           </div>
         </v-alert>
       </v-col>
@@ -157,9 +157,11 @@
                 <v-row no-gutters>
                   <v-col class="mr-n2 ml-n2">
                     <cc-dice-menu
+                      v-if="resetAttackRoll"
                       :preset="`1d20+${pilot.Grit}`"
                       :preset-accuracy="accuracy - difficulty"
                       title="ATTACK ROLL"
+                      autoroll
                       @commit="attackRoll = $event.total"
                     />
                   </v-col>
@@ -295,6 +297,7 @@ each source of damage is used.`
                         :title="`${d.Type} DAMAGE ROLL`"
                         :overkill="overkill"
                         :critical="crit"
+                        autoroll
                         @commit="setDamage(i, $event)"
                       />
                     </v-col>
@@ -560,6 +563,7 @@ export default Vue.extend({
     bonusDamage: null,
     kill: false,
     confirmed: false,
+    resetAttackRoll: false,
   }),
   computed: {
     state() {
@@ -683,6 +687,9 @@ export default Vue.extend({
       this.kill = false
       this.confirmed = false
       this.overkillHeat = 0
+      this.$nextTick(function() {
+        this.resetAttackRoll = true
+      })
     },
   },
 })

@@ -18,7 +18,8 @@
               RANK {{ 'I'.repeat(rank) }}
             </span>
           </v-col>
-          <v-col cols="auto" class="ml-auto mr-8 mt-n1">
+          <v-col v-if="talent.InLcp" cols="auto" align-self="center" class="heading h3 ml-auto mr-3 mt-n1">{{ talent.LcpName }}</v-col>
+          <v-col cols="auto" class="mr-8 mt-n1">
             <v-btn icon color="white" class="fadeSelect" @click="$emit('expand', 'full')">
               <v-icon>mdi-arrow-expand</v-icon>
             </v-btn>
@@ -34,7 +35,7 @@
             v-show="showFull || (!showFull && rank && parseInt(rank) >= n)"
             :key="`rank-btn-${n}`"
           >
-            <v-menu open-on-hover bottom offset-y open-delay="100">
+            <v-menu open-on-hover top offset-y open-delay="100">
               <template v-slot:activator="{ on }">
                 <v-btn :block="$vuetify.breakpoint.smAndDown" tile :color="rankColor(n)" v-on="on">
                   <v-icon v-if="!rank || (rank && parseInt(rank) >= n)" left>
@@ -56,7 +57,7 @@
                 </v-toolbar>
                 <v-card-text>
                   <talent-rank-contents
-                    :talentRank="talent.Rank(n)"
+                    :talent-rank="talent.Rank(n)"
                     :unlocked="!rank || parseInt(rank) >= (selectable ? n - 1 : n)"
                   />
                 </v-card-text>

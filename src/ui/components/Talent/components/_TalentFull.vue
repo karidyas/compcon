@@ -11,6 +11,9 @@
         <v-col v-if="rank" cols="auto" class="ml-auto mr-3">
           <v-icon size="45" color="white">cci-rank-{{ rank }}</v-icon>
         </v-col>
+        <v-col v-if="talent.InLcp" cols="auto" class="mr-3">
+          <div class="white--text heading h3">{{ talent.LcpName }}</div>
+        </v-col>
         <v-col cols="auto" align-self="center">
           <v-icon color="white" class="fadeSelect mr-n2" @click="$emit('expand', 'terse')">
             mdi-arrow-collapse
@@ -19,7 +22,7 @@
       </v-row>
     </v-toolbar>
     <v-card-text v-show="showFull" class="mb-0 pb-0">
-      <div class="flavor-text" v-html-safe="talent.Description" />
+      <div v-html-safe="talent.Description" class="flavor-text" />
     </v-card-text>
     <v-card-text>
       <v-row
@@ -68,7 +71,7 @@
             </v-col>
           </v-row>
           <talent-rank-contents
-            :talentRank="talent.Rank(n)"
+            :talent-rank="talent.Rank(n)"
             :unlocked="!rank || parseInt(rank) >= (selectable ? n - 1 : n)"
           />
         </v-col>
@@ -94,6 +97,13 @@ import TalentRankContents from './_TalentRankContents.vue'
 export default Vue.extend({
   name: 'talent-full',
   components: { TalentEmblem, TalentRankContents },
+  props: {
+    hideLocked: { type: Boolean },
+    talent: { type: Object, required: true },
+    selectable: { type: Boolean },
+    canAdd: { type: Boolean },
+    rank: { type: [Number, String], required: false, default: null },
+  },
   data: () => ({
     showAll: false,
   }),
@@ -102,13 +112,6 @@ export default Vue.extend({
       if (this.hideLocked) return this.showAll
       return true
     },
-  },
-  props: {
-    hideLocked: { type: Boolean },
-    talent: { type: Object, required: true },
-    selectable: { type: Boolean },
-    canAdd: { type: Boolean },
-    rank: { type: [Number, String], required: false, default: null },
   },
 })
 </script>

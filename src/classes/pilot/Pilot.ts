@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import _ from 'lodash'
 import uuid from 'uuid/v4'
 import {
@@ -114,7 +115,7 @@ class Pilot implements ICloudSyncable {
   private _id: string
   private _level: number
   private _portrait: string
-  private _current_hp: number
+  private _missing_hp: number
   private _background: string
 
   private _special_equipment: CompendiumItem[]
@@ -150,7 +151,7 @@ class Pilot implements ICloudSyncable {
     this._portrait = ''
     this._cloud_portrait = ''
     this._quirks = []
-    this._current_hp = Rules.BasePilotHP
+    this._missing_hp = 0
     this._loadout = new PilotLoadout(0)
     this._background = ''
     this._special_equipment = []
@@ -178,7 +179,7 @@ class Pilot implements ICloudSyncable {
   public save(skip = false): void {
     if (skip) return
     if (this.IsLocallyOwned) this.IsDirty = true
-    store.dispatch('saveData')
+    store.dispatch('setPilotsDirty')
   }
 
   public SetBrewData(): void {
@@ -232,7 +233,7 @@ class Pilot implements ICloudSyncable {
   }
 
   public get ShareCode(): string {
-    if (!this.ResourceURI || !this.CloudOwnerID) return 'ERR'
+    if (!this.ResourceURI || !this.CloudOwnerID) return 'ERR: PERFORM MANUAL SYNC AND RETRY'
     return `${this.CloudOwnerID.split(':')[1]}//${this.ResourceURI.split('/')[1]}`
   }
 
@@ -396,14 +397,15 @@ class Pilot implements ICloudSyncable {
     this.CloudID = itemCloudId
     this.CloudOwnerID = userCognitoId
     this.IsLocallyOwned = false
-    this.RenewID()
+    // this.RenewID()
   }
 
   public SetOwnedResource(userCognitoId: string): void {
     console.log('pilot call, set owned resource')
-    this.CloudID = this.ID
-    this.CloudOwnerID = userCognitoId
+    Vue.set(this, 'CloudID', this.ID)
+    Vue.set(this, 'CloudOwnerID', userCognitoId)
     this.IsLocallyOwned = true
+    this.save()
   }
 
   public get CloudImage(): string {
@@ -488,13 +490,13 @@ class Pilot implements ICloudSyncable {
   }
 
   public get CurrentHP(): number {
-    return this._current_hp
+    return this.MaxHP - this._missing_hp
   }
 
   public set CurrentHP(hp: number) {
-    if (hp > this.MaxHP) this._current_hp = this.MaxHP
-    else if (hp < 0) this._current_hp = 0
-    else this._current_hp = hp
+    if (hp > this.MaxHP) this._missing_hp = 0
+    else if (hp < 0) this._missing_hp = this.MaxHP
+    else this._missing_hp = this.MaxHP - hp
     this.save()
   }
 
@@ -531,7 +533,14 @@ class Pilot implements ICloudSyncable {
 
   public set Skills(skills: PilotSkill[]) {
     this._skills = skills
+    this.skillSort()
     this.save()
+  }
+
+  private skillSort(): void {
+    this._skills = this._skills.sort(function (a, b) {
+      return a.Title > b.Title ? 1 : -1
+    })
   }
 
   public get CurrentSkillPoints(): number {
@@ -555,14 +564,13 @@ class Pilot implements ICloudSyncable {
   }
 
   public CanAddSkill(skill: Skill | CustomSkill): boolean {
-    if (this._level === 0) {
-      return this._skills.length < Rules.MinimumPilotSkills && !this.has('Skill', skill.ID)
-    } else {
-      const underLimit = this.CurrentSkillPoints < this.MaxSkillPoints
-      if (!this.has('Skill', skill.ID) && underLimit) return true
-      const pSkill = this._skills.find(x => x.Skill.ID === skill.ID)
-      return underLimit && pSkill && pSkill.Rank < Rules.MaxTriggerRank
-    }
+    const hasMinSkills = this._skills.length >= Rules.MinimumPilotSkills
+    return this.IsMissingSkills && (
+      !this.has('Skill', skill.ID) || (
+        hasMinSkills &&
+        this._skills.find(x => x.Skill.ID === skill.ID).Rank < Rules.MaxTriggerRank
+      )
+    )
   }
 
   public AddSkill(skill: Skill | CustomSkill): void {
@@ -572,6 +580,7 @@ class Pilot implements ICloudSyncable {
     } else {
       this._skills[index].Increment()
     }
+    this.skillSort()
     this.save()
   }
 
@@ -594,6 +603,7 @@ class Pilot implements ICloudSyncable {
         this._skills.splice(index, 1)
       }
     }
+    this.skillSort()
     this.save()
   }
 
@@ -612,6 +622,7 @@ class Pilot implements ICloudSyncable {
 
   public set Talents(talents: PilotTalent[]) {
     this._talents = talents
+    this.talentSort()
     this.save()
   }
 
@@ -972,6 +983,11 @@ class Pilot implements ICloudSyncable {
     return this._state.ActiveMech
   }
 
+  public set ActiveMech(mech: Mech | null) {
+    this._state = new ActiveState(this)
+    this._state.ActiveMech = mech
+  }
+
   // -- COUNTERS ----------------------------------------------------------------------------------
 
   private _counterSaveData = []
@@ -1056,6 +1072,10 @@ class Pilot implements ICloudSyncable {
     for (const k in this._combat_history) {
       if (ms[k]) this._combat_history[k] += ms[k]
     }
+  }
+
+  public get CombatHistory(): ICombatStats {
+    return this._combat_history
   }
 
   public Kill(): void {
@@ -1181,7 +1201,7 @@ class Pilot implements ICloudSyncable {
       counter_data: p.CounterSaveData,
       custom_counters: p.CustomCounterData,
       special_equipment: this.serializeSE(p._special_equipment),
-      combat_history: p.State.Stats,
+      combat_history: p._combat_history,
       state: ActiveState.Serialize(p.State),
       brews: p._brews || [],
     }
@@ -1197,15 +1217,16 @@ class Pilot implements ICloudSyncable {
     }
   }
 
-  public Update(data: IPilotData, ignoreProps?: boolean): void {
-    if (ignoreProps) {
+  public Update(data: IPilotData, sync?: boolean): void {
+    if (sync) {
       for (const key in data) {
         if (this.SyncIgnore.includes(key)) data[key] = null
       }
     }
-
-    if (!ignoreProps) this._group = data.group || ''
-    if (!ignoreProps) this._sortIndex = data.sort_index || 0
+    else {
+      this._group = data.group || ''
+      this._sortIndex = data.sort_index || 0
+    }
 
     this._gistCode = data.gistCode || ''
     this._gistOwner = data.gistOwner || ''
@@ -1228,7 +1249,7 @@ class Pilot implements ICloudSyncable {
     this._portrait = data.portrait
     this._cloud_portrait = data.cloud_portrait
     this._quirks = data.quirks ? data.quirks : (data as any).quirk ? [(data as any).quirk] : []
-    this._current_hp = data.current_hp
+    this.CurrentHP = data.current_hp
     this._background = data.background
     this._mechSkills = MechSkills.Deserialize(this, data.mechSkills)
     this._licenses = data.licenses.map((x: IRankedData) => PilotLicense.Deserialize(x))
@@ -1247,7 +1268,11 @@ class Pilot implements ICloudSyncable {
     this._special_equipment = data.special_equipment
       ? Pilot.deserializeSE(data.special_equipment)
       : []
-    this._state = data.state ? ActiveState.Deserialize(this, data.state) : new ActiveState(this)
+    if (sync && data.state) {
+      this._state.Update(this, data.state, sync)
+    } else {
+      this._state = data.state ? ActiveState.Deserialize(this, data.state) : new ActiveState(this)
+    }
     this.cc_ver = data.cc_ver || ''
     this._counterSaveData = data.counter_data || []
     this._customCounters = (data.custom_counters as ICounterData[]) || []

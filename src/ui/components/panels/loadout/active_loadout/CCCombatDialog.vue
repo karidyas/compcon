@@ -30,7 +30,7 @@
       </v-card-text>
       <tech-attack
         v-if="action.IsTechAttack"
-        :used="techAttack"
+        :used="action.IsItemAction ? action.Used : techAttack"
         :action="action"
         :mech="mech"
         @techAttackComplete="techAttackComplete($event)"
@@ -121,7 +121,7 @@ export default Vue.extend({
         this.displayLog = this.action.AnyUsed
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this
-        this.$emit('use')
+        this.$emit('use', free)
         Vue.nextTick().then(() => self.$forceUpdate())
       }
     },
@@ -158,6 +158,7 @@ export default Vue.extend({
     },
     show() {
       this.dialog = true
+      this.displayLog = this.action.AnyUsed
     },
     hide() {
       if (!this.$refs.c.init) {

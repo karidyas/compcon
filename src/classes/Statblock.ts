@@ -143,6 +143,11 @@ class Statblock {
               if (idx + 1 < mount.Weapons.length) output += ' / '
             })
           }
+
+          if (mount.Bonuses.length > 0) {
+            output += ' // ' + mount.Bonuses.map(bonus => bonus.Name).join(', ')
+          }
+
           output += '\n'
         }
 
@@ -239,7 +244,7 @@ class Statblock {
 [ SYSTEMS ]
   ${mechLoadout.Systems.map(sys => {
     let out = sys.TrueName
-    if (sys.IsLimited) out += ` x${sys.MaxUses + mech.LimitedBonus}`
+    if (sys.IsLimited) out += ` x${sys.getTotalUses(mech.LimitedBonus)}`
     return out
   }).join(', ')}`
   }

@@ -1,6 +1,7 @@
 import path from 'path'
 import uuid from 'uuid/v4'
 import { writeFile, readFile, exists, USER_DATA_PATH } from '../io/Data'
+import _ from 'lodash'
 
 const CONFIG_FILE_NAME = 'user.config'
 
@@ -11,12 +12,15 @@ interface IViewOptions {
   hangar: string
   pilotSheet: string
   showExotics: boolean
+  quickstart: boolean
 }
 
 interface ISyncFrequency {
   onAppLoad: boolean
   onLogIn: boolean
+  onBulkDelete: boolean
   onAppExit: boolean
+  onThemeChange: boolean
   onPilotLevel: boolean
   onPilotCreate: boolean
   onPilotDelete: boolean
@@ -64,12 +68,15 @@ const defaultViewOptions = (): IViewOptions => ({
   hangar: 'cards',
   pilotSheet: 'tabbed',
   showExotics: false,
+  quickstart: false,
 })
 
 const defaultSyncFrequency = (): ISyncFrequency => ({
   onAppLoad: true,
   onLogIn: true,
+  onBulkDelete: true,
   onAppExit: true,
+  onThemeChange: true,
   onPilotLevel: true,
   onPilotCreate: true,
   onPilotDelete: true,
@@ -105,6 +112,7 @@ class UserProfile {
   private _encounters: string[]
   private _missions: string[]
   private _active_missions: string[]
+  private _load_options: string []
   public id: string
   public _version: number
   public LastSync: string
@@ -126,6 +134,7 @@ class UserProfile {
     this._missions = []
     this._active_missions = []
     this.LastSync = 'Never'
+    this._load_options = ['onAppLoad', 'onLogIn']
   }
 
   private save(): void {
@@ -168,6 +177,22 @@ class UserProfile {
   public set SyncFrequency(data: ISyncFrequency) {
     this._syncFrequency = data
     this.save()
+  }
+
+  public get SaveOptions(): string[] {
+    return Object.keys(this.SyncFrequency).filter(x => !this.LoadOptions.includes(x))
+  }
+
+  public get LoadOptions(): string[] {
+    return this._load_options
+  }
+
+  public get SaveFrequency(): Partial<ISyncFrequency> {
+    return _.pick(this.SyncFrequency, this.SaveOptions)
+  }
+
+  public get LoadFrequency(): Partial<ISyncFrequency> {
+    return _.pick(this.SyncFrequency, this.LoadOptions)
   }
 
   public get Achievements(): string[] {

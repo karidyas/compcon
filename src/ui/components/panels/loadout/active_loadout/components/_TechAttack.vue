@@ -82,9 +82,11 @@
               <v-row no-gutters>
                 <v-col class="mr-n2 ml-n2">
                   <cc-dice-menu
+                    v-if="resetAttackRoll"
                     :preset="`1d20+${mech.TechAttack}`"
                     :preset-accuracy="accuracy - difficulty"
                     title="Tech Attack"
+                    autoroll
                     @commit="registerTechRoll($event.total)"
                   />
                 </v-col>
@@ -138,7 +140,6 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { DiceRoller } from '@/class'
 
 export default Vue.extend({
   name: 'tech-attack',
@@ -153,13 +154,14 @@ export default Vue.extend({
     attackRoll: '',
     succeeded: false,
     failed: false,
+    resetAttackRoll: false,
   }),
   watch: {
     used: {
       immediate: true,
       deep: true,
-      handler: function () {
-        this.init()
+      handler: function(newval) {
+        if (!newval) this.init()
       },
     },
   },
@@ -172,6 +174,10 @@ export default Vue.extend({
       this.succeeded = false
       this.failed = false
       this.attackRoll = ''
+      this.resetAttackRoll = false
+      this.$nextTick(function() {
+        this.resetAttackRoll = true
+      })
     },
     registerTechRoll(roll) {
       Vue.set(this, 'attackRoll', roll)

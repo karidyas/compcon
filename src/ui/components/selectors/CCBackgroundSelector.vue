@@ -9,7 +9,7 @@
           slot="sidebar"
           link
           @click="
-            $vuetify.goTo(`#e_${e.id}`, {
+            $vuetify.goTo(`#e_${e.ID}`, {
               duration: 250,
               easing: 'easeInOutQuad',
               offset: 25,
@@ -20,7 +20,7 @@
           <v-list-item-title class="heading h3 ml-2">{{ e.Name }}</v-list-item-title>
         </v-list-item>
         <br />
-        <v-row v-for="(e, i) in backgrounds" :id="`e_${e.id}`" :key="`${e.id}_${i}`" dense>
+        <v-row v-for="(e, i) in backgrounds" :id="`e_${e.ID}`" :key="`${e.ID}_${i}`" dense>
           <v-col>
             <cc-titled-panel
               icon="cci-orbit"
@@ -29,7 +29,8 @@
               clickable
               @click="choose(e.Name)"
             >
-              <p class="flavor-text" v-html-safe="e.Description" />
+              <h3 v-if="e.InLcp" v-html-safe="e.LcpName" class="heading mb-2" />
+              <p v-html-safe="e.Description" class="flavor-text" />
             </cc-titled-panel>
           </v-col>
         </v-row>

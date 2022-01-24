@@ -2,13 +2,14 @@
   <equipment-card-base :item="item">
     <v-col cols="auto" class="ml-auto text-right">
       <span class="flavor-text subtle--text">// {{ item.Origin }}</span>
+      <div v-if="item.InLcp" class="flavor-text subtle--text">{{ item.LcpName }}</div>
     </v-col>
     <div slot="statblock">
       <span class="overline ml-n2">TRIGGER</span>
       <p
+        v-html-safe="`<b>Trigger:&nbsp;</b>${item.Trigger}`"
         class="text--text"
         style="font-size: 20px"
-        v-html-safe="`<b>Trigger:&nbsp;</b>${item.Trigger}`"
       />
     </div>
   </equipment-card-base>

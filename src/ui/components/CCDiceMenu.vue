@@ -285,6 +285,7 @@ export default Vue.extend({
     presetAccuracy: { type: Number, required: false, default: 0 },
     overkill: { type: Boolean },
     critical: { type: Boolean },
+    autoroll: { type: Boolean },
   },
   data: () => ({
     menu: false,
@@ -296,14 +297,6 @@ export default Vue.extend({
     accuracy: 0,
     accTotal: 0,
   }),
-  mounted() {
-    this.reset()
-  },
-  watch: {
-    menu() {
-      this.reset()
-    },
-  },
   computed: {
     accString() {
       if (this.accuracy > 0) return `<b>${this.accuracy}</b>&nbsp;&nbsp;ACCURACY`
@@ -328,6 +321,21 @@ export default Vue.extend({
       )
     },
   },
+  watch: {
+    menu() {
+      if (!this.menu || !this.autoroll) this.reset()
+    },
+    presetAccuracy() {
+      if (this.autoroll) {
+        this.accuracy=this.presetAccuracy
+        this.autoRoll()
+      }
+    },
+  },
+  mounted() {
+    this.reset()
+    if (this.autoroll) this.$nextTick(this.autoRoll)
+  },
   methods: {
     addDice(sides) {
       this.result = null
@@ -345,6 +353,10 @@ export default Vue.extend({
       this.result = null
       if (this.accuracy > 0) this.accuracy--
       else this.accuracy++
+    },
+    autoRoll() {
+      this.roll()
+      this.commit()
     },
     roll() {
       this.result = this.dice.map(x => {

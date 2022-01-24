@@ -4,6 +4,7 @@ import * as Sync from '../sync'
 import * as Client from '../index'
 import { ActiveMission, Encounter, Mission, Npc, Pilot } from '@/class'
 import { Auth } from 'aws-amplify'
+import _ from 'lodash'
 
 export const SET_LOGGED_IN = 'SET_LOGGED_IN'
 export const SET_AUTH_STATUS = 'SET_AUTH_STATUS'
@@ -13,6 +14,8 @@ export const LOAD_USER = 'LOAD_USER'
 export const SET_USER = 'SET_USER'
 export const SET_AWS_DATA = 'SET_AWS_DATA'
 export const SET_USER_PROFILE = 'SET_USER_PROFILE'
+
+let localUpdateTime = null
 
 @Module({
   name: 'cloud',
@@ -77,7 +80,7 @@ export class UserStore extends VuexModule {
   }
 
   @Action
-  public async setUserProfile(payload: any): Promise<void> {
+  public setUserProfile(payload: any): void {
     this.context.commit(SET_USER_PROFILE, payload)
   }
 
@@ -91,45 +94,47 @@ export class UserStore extends VuexModule {
   }
 
   @Action({ rawError: true })
-  public async setAws(payload: any, condition?: string): Promise<void> {
-    let sync = true
-    Sync.GetSync(payload.username)
-      .then(res => {
-        this.setUserProfile(res)
-      })
-      .then(() => {
-        this.context.commit(SET_LOGGED_IN, true)
-      })
-      .then(() => {
-        this.UserProfile.Username = payload.attributes.email
-        if (condition === 'appLoad' && !this.UserProfile.SyncFrequency.onAppLoad) sync = false
-        if (condition === 'logIn' && !this.UserProfile.SyncFrequency.onLogIn) sync = false
-      })
-      .then(() => {
-        if (sync) {
-          Sync.ContentPull()
-            .then(() => {
-              this.context.dispatch('refreshExtraContent')
-            })
-            .then(() => {
-              Sync.CloudPull(this.UserProfile, e => {
-                if (e instanceof Pilot)
-                  this.context.dispatch('addPilot', { pilot: e, update: false })
-                if (e instanceof Npc) this.context.dispatch('addNpc', e)
-                if (e instanceof Encounter) this.context.dispatch('addEncounter', e)
-                if (e instanceof Mission) this.context.dispatch('addMission', e)
-                if (e instanceof ActiveMission) this.context.dispatch('addActiveMission', e)
-              })
-            })
-            .then(() => {
-              this.UserProfile.MarkSync()
-            })
-        }
-      })
-      .catch(err => {
-        console.error(err)
-        throw new Error(`Unable to sync userdata\n${err}`)
-      })
+  public async setAws(payload: { user: any, condition?: string, noSync?: boolean }): Promise<void> {
+    let sync = !payload.noSync
+    if (localUpdateTime) {
+      const diff = (new Date().getTime() - localUpdateTime.getTime()) / 1000
+      if (diff < 3) {
+        console.info(`Sync rate exceeded, please wait ${(3 - diff).toFixed(2)} seconds before syncing again`)
+        sync = false
+        return
+      }
+    }
+    localUpdateTime = new Date()
+
+    const syncedUser = await Sync.GetSync(payload.user.username)
+
+    this.setUserProfile(syncedUser)
+    this.setLoggedIn(true)
+    this.UserProfile.Username = payload.user.attributes.email
+    if (payload.condition === 'appLoad' && !this.UserProfile.SyncFrequency.onAppLoad) sync = false
+    if (payload.condition === 'logIn' && !this.UserProfile.SyncFrequency.onLogIn) sync = false
+    if (sync) {
+      Sync.ContentPull()
+        .then(() => {
+          this.context.dispatch('refreshExtraContent')
+        })
+        .then(() => {
+          Sync.CloudPull(this.UserProfile, e => {
+            if (e instanceof Pilot)
+              this.context.dispatch('addPilot', { pilot: e, update: false })
+            if (e instanceof Npc) this.context.dispatch('addNpc', e)
+            if (e instanceof Encounter) this.context.dispatch('addEncounter', e)
+            if (e instanceof Mission) this.context.dispatch('addMission', e)
+            if (e instanceof ActiveMission) this.context.dispatch('addActiveMission', e)
+          })
+        })
+        .then(() => {
+          this.UserProfile.MarkSync()
+        })
+        .catch(err => {
+          console.error('unable to sync extra content: ', err)
+        })
+    }
   }
 
   @Action({ rawError: true })
@@ -147,6 +152,10 @@ export class UserStore extends VuexModule {
     }
 
     let sync = true
+    if (payload.condition === 'bulkDelete' && !this.UserProfile.SyncFrequency.onBulkDelete)
+      sync = false
+    if (payload.condition === 'themeChange' && !this.UserProfile.SyncFrequency.onThemeChange)
+      sync = false
     if (payload.condition === 'pilotLevel' && !this.UserProfile.SyncFrequency.onPilotLevel)
       sync = false
     if (payload.condition === 'pilotCreate' && !this.UserProfile.SyncFrequency.onPilotCreate)
@@ -157,9 +166,9 @@ export class UserStore extends VuexModule {
       sync = false
     if (payload.condition === 'mechDelete' && !this.UserProfile.SyncFrequency.onMechDelete)
       sync = false
-    if (payload.condition === 'mechDelete' && !this.UserProfile.SyncFrequency.onNpcCreate)
+    if (payload.condition === 'npcCreate' && !this.UserProfile.SyncFrequency.onNpcCreate)
       sync = false
-    if (payload.condition === 'mechDelete' && !this.UserProfile.SyncFrequency.onNpcDelete)
+    if (payload.condition === 'npcDelete' && !this.UserProfile.SyncFrequency.onNpcDelete)
       sync = false
     if (
       payload.condition === 'encounterCreate' &&
@@ -179,10 +188,18 @@ export class UserStore extends VuexModule {
       sync = false
     if (payload.condition === 'turnEnd' && !this.UserProfile.SyncFrequency.onTurnEnd) sync = false
 
-    console.log('sync: ', sync)
+    if (localUpdateTime) {
+      const diff = (new Date().getTime() - localUpdateTime.getTime()) / 1000
+      if (diff < 3) {
+        console.info(`Sync rate exceeded, please wait ${(3 - diff).toFixed(2)} seconds before syncing again`)
+        sync = false
+      }
+    }
 
-    if (sync)
+    if (sync) {
+      localUpdateTime = new Date()
       Sync.CloudPush(this.UserProfile, payload.callback).then(() => this.UserProfile.MarkSync())
+    }
   }
 
   @Action

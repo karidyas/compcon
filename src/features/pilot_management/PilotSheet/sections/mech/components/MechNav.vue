@@ -2,20 +2,26 @@
   <div class="nav-body elevation-10">
     <div id="cap" />
     <div v-if="$vuetify.breakpoint.mdAndUp" class="d-inline">
-      <cc-nav-item tile depressed :selected="selected === 0" @click="$emit('set-page', 0)">
-        MECH CONFIGURATION
-      </cc-nav-item>
+      <cc-tooltip inline delayed content="Active Mech Configuration">
+        <cc-nav-item tile depressed :selected="selected === 0" @click="$emit('set-page', 0)">
+          MECH CONFIGURATION
+        </cc-nav-item>
+      </cc-tooltip>
       <cc-tooltip simple inline content="Feature In Development">
         <cc-nav-item disabled :selected="selected === 1" @click="$emit('set-page', 1)">
           COMBAT ANALYTICS
         </cc-nav-item>
       </cc-tooltip>
-      <v-btn icon fab x-small outlined class="mx-4 unskew" dark @click="toPilotSheet()">
-        <v-icon large>cci-pilot</v-icon>
-      </v-btn>
-      <v-btn icon fab x-small outlined class="mr-4 unskew" dark :to="`/active/${pilot.ID}`">
-        <v-icon large color="white">cci-activate</v-icon>
-      </v-btn>
+      <cc-tooltip inline delayed content="Pilot Sheet">
+        <v-btn icon fab x-small outlined class="mx-4 unskew" dark @click="toPilotSheet()">
+          <v-icon large>cci-pilot</v-icon>
+        </v-btn>
+      </cc-tooltip>
+      <cc-tooltip inline delayed content="Active Mode">
+        <v-btn icon fab x-small outlined class="mr-4 unskew" dark :to="`/active/${pilot.ID}`">
+          <v-icon large color="white">cci-activate</v-icon>
+        </v-btn>
+      </cc-tooltip>
     </div>
     <v-menu v-else open-on-hover>
       <template v-slot:activator="{ on }">
@@ -27,6 +33,9 @@
       <v-list dense class="heading h3">
         <v-list-item @click="$emit('set-page', 0)">
           MECH CONFIGURATION
+        </v-list-item>
+        <v-list-item @click="toPilotSheet()">
+          PILOT SHEET
         </v-list-item>
         <v-list-item tile depressed :selected="selected === 0" :to="`/active/${pilot.ID}`">
           ACTIVE MODE
@@ -42,7 +51,9 @@
     <v-menu offset-y top>
       <template v-slot:activator="{ on: menu }">
         <v-btn class="unskew ml-2" icon dark v-on="menu">
-          <v-icon>mdi-settings</v-icon>
+          <cc-tooltip inline delayed content="Mech Options">
+            <v-icon>mdi-settings</v-icon>
+          </cc-tooltip>
         </v-btn>
       </template>
       <v-list two-line subheader>
@@ -85,7 +96,9 @@
     <v-menu offset-y top>
       <template v-slot:activator="{ on: menu }">
         <v-btn class="unskew ml-2" icon dark v-on="menu">
-          <v-icon>mdi-view-grid-plus</v-icon>
+          <cc-tooltip inline delayed content="Layout Options">
+            <v-icon>mdi-view-grid-plus</v-icon>
+          </cc-tooltip>
         </v-btn>
       </template>
       <v-list subheader>

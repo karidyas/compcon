@@ -25,8 +25,8 @@
       class="my-6"
       dense
     >
-      <h3 v-if="subKey" class="heading mb-2" v-html-safe="e[subKey]" />
-      <p class="body-text mb-1" v-html-safe="e[descriptionKey]" />
+      <h3 v-if="subKey && ( ! subConditional || e[subConditional] )" v-html-safe="e[subKey]" class="heading mb-2" />
+      <p v-html-safe="e[descriptionKey]" class="body-text mb-1" />
     </cc-titled-panel>
   </cc-sidebar-view>
 </template>
@@ -56,6 +56,11 @@ export default Vue.extend({
       default: 'Description',
     },
     subKey: {
+      type: String,
+      required: false,
+      default: '',
+    },
+    subConditional: {
       type: String,
       required: false,
       default: '',

@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { Mech } from '@/class'
+import { Mech, WeaponType } from '@/class'
 import { CompendiumItem } from './CompendiumItem'
 import { ItemType } from './enums'
 import { MechSystem } from './mech/MechSystem'
@@ -37,6 +37,7 @@ class Synergy {
     if (item.ItemType === ItemType.MechWeapon) {
       sArr = sArr.filter(s => {
         if (s.WeaponTypes.includes('any')) return true
+        if ((item as MechWeapon).WeaponType === WeaponType.All) return true
         return s.WeaponTypes.includes((item as MechWeapon).WeaponType)
       })
       sArr = sArr.filter(s => {
@@ -51,6 +52,16 @@ class Synergy {
     }
 
     return _.uniq(sArr)
+  }
+
+  public static Serialize(synergy: Synergy): ISynergyData {
+    return {
+      locations: synergy.Locations,
+      detail: synergy.Detail,
+      weapon_types: synergy.WeaponTypes,
+      system_types: synergy.SystemTypes,
+      weapon_sizes: synergy.WeaponSizes
+    }
   }
 }
 
