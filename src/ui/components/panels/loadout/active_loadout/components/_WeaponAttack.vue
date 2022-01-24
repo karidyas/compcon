@@ -38,7 +38,7 @@
         <v-alert v-if="item.ProfileEffect" dense outlined color="active" class="mt-2">
           <div class="mb-n2 mt-n2">
             <div class="overline stark--text my-n2">EFFECT</div>
-            <p class="text--text body-text mb-1 mr-2 ml-3" v-html-safe="item.ProfileEffect" />
+            <p v-html-safe="item.ProfileEffect" class="text--text body-text mb-1 mr-2 ml-3" />
           </div>
         </v-alert>
         <v-alert
@@ -51,7 +51,7 @@
         >
           <div class="my-n2">
             <div class="overline stark--text my-n2">ON ATTACK</div>
-            <p class="text--text body-text mb-1" v-html-safe="item.ProfileOnAttack" />
+            <p v-html-safe="item.ProfileOnAttack" class="text--text body-text mb-1" />
           </div>
         </v-alert>
 
@@ -86,7 +86,7 @@
         >
           <div class="mb-n2">
             <div class="overline stark--text my-n2">ON HIT</div>
-            <p class="text--text body-text mb-1" v-html-safe="item.ProfileOnHit" />
+            <p v-html-safe="item.ProfileOnHit" class="text--text body-text mb-1" />
           </div>
         </v-alert>
         <v-alert
@@ -102,7 +102,7 @@
           </v-icon>
           <div class="mb-n2">
             <div class="overline stark--text my-n2">ON CRITICAL HIT</div>
-            <p class="text--text body-text mb-1" v-html-safe="item.ProfileOnCrit" />
+            <p v-html-safe="item.ProfileOnCrit" class="text--text body-text mb-1" />
           </div>
         </v-alert>
       </v-col>
@@ -218,7 +218,7 @@
                       v-if="resetAttackRoll"
                       :preset="`1d20+${mech.AttackBonus}`"
                       :preset-accuracy="accuracy - difficulty"
-                      autoroll=true
+                      autoroll
                       title="ATTACK ROLL"
                       @commit="attackRoll = $event.total"
                     />
@@ -258,9 +258,9 @@
                   tile
                   block
                   :disabled="!attackRoll"
-                  :color="`${crit ? 'secondary' : 'action--reaction'} ${
-                    attackFree ? 'lighten-1' : ''
-                  }`"
+                  :color="
+                    `${crit ? 'secondary' : 'action--reaction'} ${attackFree ? 'lighten-1' : ''}`
+                  "
                   @click="attackFree = !attackFree"
                 >
                   <v-icon left>cci-reaction</v-icon>
@@ -274,9 +274,11 @@
                   block
                   class="white--text"
                   :disabled="attackFree || !attackRoll || (!improv && !state.IsSkirmishAvailable)"
-                  :color="`${crit ? 'secondary' : improv ? 'action--full' : 'action--quick'} ${
-                    attackQuick ? 'lighten-1' : ''
-                  }`"
+                  :color="
+                    `${crit ? 'secondary' : improv ? 'action--full' : 'action--quick'} ${
+                      attackQuick ? 'lighten-1' : ''
+                    }`
+                  "
                   @click="attackQuick = !attackQuick"
                 >
                   <v-icon v-if="improv" left>mdi-hexagon-slice-6</v-icon>
@@ -345,9 +347,11 @@
             <v-col cols="auto" class="ml-auto" />
             <v-col v-if="hit && crit" cols="auto" class="text-center">
               <cc-tooltip
-                :content="`On a critical hit, all damage dice are rolled twice
+                :content="
+                  `On a critical hit, all damage dice are rolled twice
 (including bonus damage) and the highest result from
-each source of damage is used.`"
+each source of damage is used.`
+                "
               >
                 <v-icon x-large color="secondary">mdi-progress-alert</v-icon>
                 <div class="secondary--text">CRITICAL HIT</div>
@@ -371,7 +375,7 @@ each source of damage is used.`"
                         :title="`${d.Type} DAMAGE ROLL`"
                         :overkill="overkill"
                         :critical="crit"
-                        autoroll=true
+                        autoroll
                         @commit="setDamage(i, $event)"
                       />
                     </v-col>
@@ -480,7 +484,9 @@ each source of damage is used.`"
                 <v-row no-gutters justify="end" align="center">
                   <v-col cols="auto">
                     <cc-tooltip
-                      :content="`When rolling for damage with this weapon, any damage dice that land on a 1 cause the attacker to take 1 Heat, and are then rerolled. Additional 1s continue to trigger this effect. ${autoOverkillString}`"
+                      :content="
+                        `When rolling for damage with this weapon, any damage dice that land on a 1 cause the attacker to take 1 Heat, and are then rerolled. Additional 1s continue to trigger this effect. ${autoOverkillString}`
+                      "
                     >
                       <v-icon x-large>mdi-progress-alert</v-icon>
                     </cc-tooltip>
@@ -668,7 +674,7 @@ export default Vue.extend({
       }
     },
     overkill() {
-      if (this.item.Tags.some(x => x.IsOverkill)) return true
+      if (this.item.ProfileTags.some(x => x.IsOverkill)) return true
       if (this.item.Mod && this.item.Mod.AddedTags.some(x => x.IsOverkill)) return true
       return false
     },
@@ -713,23 +719,23 @@ export default Vue.extend({
       return Damage.CalculateDamage(this.item, this.mech)
     },
     isSmart() {
-      if (this.item.Tags.some(x => x.IsSmart)) return true
+      if (this.item.ProfileTags.some(x => x.IsSmart)) return true
       if (this.item.Mod && this.item.Mod.AddedTags.some(x => x.IsSmart)) return true
       return false
     },
     reliable() {
-      const r = this.item.Tags.find(x => x.ID === 'tg_reliable')
-      return r ? r.Value : 0
+      const r = this.item.ProfileTags.find(x => x.ID === 'tg_reliable')
+      return Number(r ? r.Value : 0)
     },
     minAccuracy() {
       let bonus = 0
-      if (this.item.Tags.some(x => x.ID === 'tg_accurate')) bonus += 1
+      if (this.item.ProfileTags.some(x => x.ID === 'tg_accurate')) bonus += 1
       if (this.item.Mod && this.item.Mod.AddedTags.some(x => x.ID === 'tg_accurate')) bonus += 1
       if (this.hardpoints) bonus += 1
       return bonus
     },
     minDifficulty() {
-      if (this.item.Tags.some(x => x.ID === 'tg_inaccurate')) return 1
+      if (this.item.ProfileTags.some(x => x.ID === 'tg_inaccurate')) return 1
       if (this.item.Mod && this.item.Mod.AddedTags.some(x => x.ID === 'tg_inaccurate')) return 1
       return 0
     },
@@ -820,7 +826,7 @@ export default Vue.extend({
       this.confirmed = false
       this.overkillHeat = 0
       this.resetAttackRoll = false
-      this.$nextTick(function () {
+      this.$nextTick(function() {
         this.resetAttackRoll = true
       })
     },

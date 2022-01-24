@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid  >
+  <v-container fluid>
     <v-row dense align="start">
       <v-col cols="auto" class="mr-4">
         <div class="overline mt-n2 mb-n4">CALLSIGN</div>
@@ -193,9 +193,9 @@
             class="pa-1 mt-n2"
             v-html="
               `+${a.Armor || 0} Armor / E-Def: ${a.EDefense || 'N/A'} / Evasion: ${a.Evasion ||
-                'N/A'}${a.HPBonus ? ` HP Bonus: +${a.HPBonus}` : ''}${
-                a.Speed ? ` Speed: ${a.Speed}` : ''
-              }${a.SpeedBonus ? ` Speed Bonus: +${a.SpeedBonus}` : ''}`
+                'N/A'}<br>${a.HPBonus ? `HP Bonus: +${a.HPBonus}` : ''}${
+                a.Speed ? ` / Speed: ${a.Speed}` : ''
+              }`
             "
           />
         </fieldset>
@@ -264,7 +264,9 @@ export default Vue.extend({
   position: absolute;
   top: -2px;
   left: 1px;
+  width: 100%;
   width: -webkit-fill-available;
+  width: -moz-available;
   text-align: center;
 }
 

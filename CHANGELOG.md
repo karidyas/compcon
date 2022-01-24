@@ -1,4 +1,84 @@
 # COMP/CON Changelog
+
+## [2.2.36] (2021-12-10)
+
+### Features
+* **Global** Performance-centric overhaul of some of COMP/CON's internals. Should be a much lighter (and faster!) app now
+* **Pilot Sheet** Prevented setting negative LLs (thanks msprijatelj!) [#1826](https://github.com/massif-press/compcon/issues/1826)
+
+## [2.2.35] (2021-12-10)
+
+Thanks to msprijatelj for these updates!
+
+### Features
+* **Pilot Sheet** add basic pilot stats to Dossier [#1765](https://github.com/massif-press/compcon/issues/1765)
+
+### Bug Fixes
+
+* **Pilot Sheet** fix number spacing over icons in Print mode [#1768](https://github.com/massif-press/compcon/issues/1768)
+* **Pilot Sheet** block pilot registration when quickstart is off [#1762](https://github.com/massif-press/compcon/issues/1762)
+* **Pilot Sheet** Refactor Pilot groups for performance & roster improvements [#1713](https://github.com/massif-press/compcon/issues/1713)[#1709](https://github.com/massif-press/compcon/issues/1709)[#1611](https://github.com/massif-press/compcon/issues/1611)
+
+
+## [2.2.34] (2021-11-04)
+
+### Features
+* **Cloud** Use CSS filters to color non-svg manufacturer icons [#1757](https://github.com/massif-press/compcon/issues/1757)
+* **Mech Sheet** enable all synergies for "???" type weapons [#1754](https://github.com/massif-press/compcon/issues/1754)
+
+### Bug Fixes
+
+* **Cloud** corrects a set of annoying (but ultimately harmless) errors when a new cloud user logs in for the first time[#1642](https://github.com/massif-press/compcon/issues/1642)
+* **Mech Sheet** temporarily hide duration chips for Core Systems  (thanks, msprijatelj!)[#1756](https://github.com/massif-press/compcon/issues/1756)
+* **Active Mode** fix pilot HP ticker during ActiveRest (thanks, msprijatelj!)[#1753](https://github.com/massif-press/compcon/issues/1753)
+* **Active Mode** fix typos in Structure and Stress references (thanks, msprijatelj!)[#1752](https://github.com/massif-press/compcon/issues/1752)
+* **Active Mode** fix Full Tech Action availability[#1755](https://github.com/massif-press/compcon/issues/1755)
+
+## [2.2.33] (2021-11-02)
+
+### Features
+* **Cloud** Update and add manual data pull from cloud, improve cloud UI (thanks, msprijatelj!)[#1745](https://github.com/massif-press/compcon/issues/1745)
+* **Global** Adds some background changes for the experimental LCP editor
+
+### Bug Fixes
+
+* **Compendium** correct overheating table text [#1748](https://github.com/massif-press/compcon/issues/1748)
+* **Active Mode** allow integrated systems to be destroyed on system trauma [#1749](https://github.com/massif-press/compcon/issues/1749)
+* **Active Mode** actually repect action refresh in active mode (thanks, msprijatelj!)[#1744](https://github.com/massif-press/compcon/issues/1744)
+* **Active Mode** limited uses initialize to correct maximum (thanks, msprijatelj!)[#1729](https://github.com/massif-press/compcon/issues/1729)
+* **Active Mode** reset self-destruct counter on repair, mech change (thanks, msprijatelj!)[#1730](https://github.com/massif-press/compcon/issues/1730)
+
+## [2.2.32] (2021-10-13)
+
+Massive thanks to **msprijatelj**, who is responsible for all of the following updates, as well as a slew of LCP data 
+
+### Features
+
+* **Pilot Sheet** Quick pilot creation mode (enable in Options) [#1707](https://github.com/massif-press/compcon/issues/1707)
+* **Pilot Sheet** Improve Vault Code UX [#1696](https://github.com/massif-press/compcon/issues/1696)
+
+### Bug Fixes
+
+* **Global** Better manage login status [#1694](https://github.com/massif-press/compcon/issues/1694)
+* **Global** Overwrite cloud data on data wipe/bulk import [#1712](https://github.com/massif-press/compcon/issues/1712)
+* **Mech Hangar** Correct missing ActiveMech errors [#1699](https://github.com/massif-press/compcon/issues/1699)
+* **Mech Sheet** Fix overcropped Frame art [#1693](https://github.com/massif-press/compcon/issues/1693)
+* **Mech Sheet** Handle increased Mech sizes [#1688](https://github.com/massif-press/compcon/issues/1688)
+
+
+## [2.2.31] (2021-09-28)
+
+### Features
+* **Global** Add additional LCP indicators (thanks, TranslucentSabre!) [#1649](https://github.com/massif-press/compcon/issues/1649)
+* **Pilot Sheet** Add more Mech names (thanks ArcanErasmus ! First PR! 🎉) [#1649](https://github.com/massif-press/compcon/issues/1649)
+
+### Bug Fixes
+
+* **Pilot Roster** Upgrade pilot importing when pilots are in groups (thanks, msprijatelj!) [#1651](https://github.com/massif-press/compcon/issues/1651)
+* **Pilot Sheet** Correct serialization of WeaponUses (thanks, msprijatelj!) [#1649](https://github.com/massif-press/compcon/issues/1649)
+* **Pilot Sheet** cast Tag vals as numbers, use profile tags (thanks, msprijatelj!) [#1655](https://github.com/massif-press/compcon/issues/1655)
+
+
 ## [2.2.30] (2021-08-27)
 
 ### Bug Fixes

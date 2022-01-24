@@ -15,7 +15,7 @@ import {
 import { getImagePath, ImageTag } from '@/io/ImageManagement'
 import { Bonus } from '../Bonus'
 import { ICounterData } from '../Counter'
-import { Action } from '../Action'
+import { Action, ActivePeriod } from '../Action'
 import { IDeployableData } from '../Deployable'
 import { IMechLoadoutData } from './MechLoadout'
 
@@ -129,7 +129,7 @@ class Mech implements IActor {
   }
   // -- Utility -----------------------------------------------------------------------------------
   private save(): void {
-    store.dispatch('saveData')
+    store.dispatch('setPilotsDirty')
   }
 
   // -- Info --------------------------------------------------------------------------------------
@@ -185,7 +185,7 @@ class Mech implements IActor {
   }
 
   public get IsActive(): boolean {
-    return this.Pilot.State.ActiveMech && this.Pilot.State.ActiveMech.ID === this.ID
+    return this.Pilot.State.ActiveMech?.ID === this.ID
   }
 
   public get IsCascading(): boolean {
@@ -252,10 +252,10 @@ class Mech implements IActor {
   }
 
   public get Size(): number {
-    let size = Bonus.Int(this._frame.Size, 'size', this)
+    let size = this._frame.Size >= Rules.MaxFrameSize ? this._frame.Size : Bonus.Int(this._frame.Size, 'size', this)
     if (size < 0.5) size = 0.5
     if (size > 0.5 && size % 1 !== 0) size = Math.floor(size)
-    return size > Rules.MaxFrameSize ? Rules.MaxFrameSize : size
+    return size
   }
 
   public get SizeContributors(): string[] {
@@ -468,7 +468,7 @@ class Mech implements IActor {
     if (this._missing_structure === this.MaxStructure) this.Destroy()
     this.save()
   }
-  
+
   public get MaxStructure(): number {
     return Bonus.Int(this._frame.Structure, 'structure', this)
   }
@@ -910,8 +910,8 @@ class Mech implements IActor {
         if (y.IsLimited) y.Uses = y.getTotalUses(this.LimitedBonus)
       })
     })
-    if (this.Frame.CoreSystem.PassiveActions) this.Frame.CoreSystem.PassiveActions.forEach(a => a.Reset())
-    if (this.Frame.CoreSystem.DeployActions) this.Frame.CoreSystem.DeployActions.forEach(a => a.Reset())
+    if (this.Frame.CoreSystem.PassiveActions) this.Frame.CoreSystem.PassiveActions.forEach(a => a.Reset(ActivePeriod.Mission))
+    if (this.Frame.CoreSystem.DeployActions) this.Frame.CoreSystem.DeployActions.forEach(a => a.Reset(ActivePeriod.Mission))
     this._statuses = []
     this._conditions = []
     this._resistances = []

@@ -14,7 +14,7 @@
 
     <div v-if="item.Effect">
       <div class="overline ml-n2 mt-2 subtle--text">EQUIPMENT EFFECT</div>
-      <p class="text--text body-text mb-1" v-html-safe="item.Effect" />
+      <p v-html-safe="item.Effect" class="text--text body-text mb-1" />
     </div>
     <slot name="other_effects" />
 
@@ -64,7 +64,7 @@
 
     <slot name="profile" />
 
-    <div v-if="item.Tags && item.Tags.length">
+    <div v-if="item.Tags && item.Tags.length" class="mt-2">
       <div class="overline ml-n2 mb-n1 subtle--text">EQUIPMENT TAGS</div>
       <cc-tags :tags="item.Tags" extended />
     </div>
@@ -74,7 +74,7 @@
     </div> -->
     <div v-if="item.Description" class="mt-2">
       <div class="overline ml-n2">COMPENDIUM ENTRY</div>
-      <p class="flavor-text mb-1" v-html-safe="item.Description" />
+      <p v-html-safe="item.Description" class="flavor-text mb-1" />
     </div>
 
     <div v-if="notes">

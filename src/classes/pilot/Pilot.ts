@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import _ from 'lodash'
 import uuid from 'uuid/v4'
 import {
@@ -178,7 +179,7 @@ class Pilot implements ICloudSyncable {
   public save(skip = false): void {
     if (skip) return
     if (this.IsLocallyOwned) this.IsDirty = true
-    store.dispatch('saveData')
+    store.dispatch('setPilotsDirty')
   }
 
   public SetBrewData(): void {
@@ -232,7 +233,7 @@ class Pilot implements ICloudSyncable {
   }
 
   public get ShareCode(): string {
-    if (!this.ResourceURI || !this.CloudOwnerID) return 'ERR'
+    if (!this.ResourceURI || !this.CloudOwnerID) return 'ERR: PERFORM MANUAL SYNC AND RETRY'
     return `${this.CloudOwnerID.split(':')[1]}//${this.ResourceURI.split('/')[1]}`
   }
 
@@ -396,14 +397,15 @@ class Pilot implements ICloudSyncable {
     this.CloudID = itemCloudId
     this.CloudOwnerID = userCognitoId
     this.IsLocallyOwned = false
-    this.RenewID()
+    // this.RenewID()
   }
 
   public SetOwnedResource(userCognitoId: string): void {
     console.log('pilot call, set owned resource')
-    this.CloudID = this.ID
-    this.CloudOwnerID = userCognitoId
+    Vue.set(this, 'CloudID', this.ID)
+    Vue.set(this, 'CloudOwnerID', userCognitoId)
     this.IsLocallyOwned = true
+    this.save()
   }
 
   public get CloudImage(): string {
@@ -565,7 +567,7 @@ class Pilot implements ICloudSyncable {
     const hasMinSkills = this._skills.length >= Rules.MinimumPilotSkills
     return this.IsMissingSkills && (
       !this.has('Skill', skill.ID) || (
-        hasMinSkills && 
+        hasMinSkills &&
         this._skills.find(x => x.Skill.ID === skill.ID).Rank < Rules.MaxTriggerRank
       )
     )
@@ -981,6 +983,11 @@ class Pilot implements ICloudSyncable {
     return this._state.ActiveMech
   }
 
+  public set ActiveMech(mech: Mech | null) {
+    this._state = new ActiveState(this)
+    this._state.ActiveMech = mech
+  }
+
   // -- COUNTERS ----------------------------------------------------------------------------------
 
   private _counterSaveData = []
@@ -1065,6 +1072,10 @@ class Pilot implements ICloudSyncable {
     for (const k in this._combat_history) {
       if (ms[k]) this._combat_history[k] += ms[k]
     }
+  }
+
+  public get CombatHistory(): ICombatStats {
+    return this._combat_history
   }
 
   public Kill(): void {
@@ -1190,7 +1201,7 @@ class Pilot implements ICloudSyncable {
       counter_data: p.CounterSaveData,
       custom_counters: p.CustomCounterData,
       special_equipment: this.serializeSE(p._special_equipment),
-      combat_history: p.State.Stats,
+      combat_history: p._combat_history,
       state: ActiveState.Serialize(p.State),
       brews: p._brews || [],
     }

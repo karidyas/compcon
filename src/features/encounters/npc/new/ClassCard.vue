@@ -6,14 +6,17 @@
           {{ npcc.Name }}
         </span>
       </v-col>
+      <v-col v-if="npcc.InLcp" class="ml-auto mt-n4">
+        <div class="heading h3 text--text">{{ npcc.LcpName }}</div>
+      </v-col>
       <v-col cols="auto" class="ml-auto text-center mt-n4">
         <v-icon size="60" :color="npcc.Color">{{ npcc.RoleIcon }}</v-icon>
         <div class="overline mt-n1">{{ npcc.Role }}</div>
       </v-col>
     </v-row>
-    <p class="flavor-text panel pa-2 stark--text" v-html-safe="npcc.Flavor" />
+    <p v-html-safe="npcc.Flavor" class="flavor-text panel pa-2 stark--text" />
     <span class="heading h3 accent--text">Tactics</span>
-    <p class="body-1" v-html-safe="npcc.Tactics" />
+    <p v-html-safe="npcc.Tactics" class="body-1" />
     <v-divider class="mb-3" />
     <v-row dense align="center">
       <v-col>

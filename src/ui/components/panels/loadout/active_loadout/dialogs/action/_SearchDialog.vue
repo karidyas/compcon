@@ -31,7 +31,9 @@
           Free Action
           <cc-tooltip
             inline
-            :content="`Special rules or equipment may allow you to ${action.Name} as a Free Action. Using this button will commit the action without spending a ${action.Activation} Action this turn`"
+            :content="
+              `Special rules or equipment may allow you to ${action.Name} as a Free Action. Using this button will commit the action without spending a ${action.Activation} Action this turn`
+            "
           >
             <v-icon right small class="fadeSelect">mdi-information-outline</v-icon>
           </cc-tooltip>
@@ -59,9 +61,9 @@
                 v-model="sys"
                 type="number"
                 style="width: 60px"
-                :class="`hide-input-spinners mt-n1 ${
-                  $vuetify.breakpoint.mdAndUp ? 'ml-10' : 'ml-n8'
-                }`"
+                :class="
+                  `hide-input-spinners mt-n1 ${$vuetify.breakpoint.mdAndUp ? 'ml-10' : 'ml-n8'}`
+                "
                 color="accent"
                 dense
                 hide-details
@@ -132,14 +134,14 @@
                     :preset="`1d20+${mech.Sys}`"
                     :preset-accuracy="accuracy - difficulty"
                     title="SKILL CHECK"
-                    autoroll=true
+                    autoroll
                     @commit="registerSysRoll($event.total)"
                   />
                 </v-col>
                 <v-col>
                   <v-text-field
-                    v-model="sysRoll"
                     :key="`input_${sysRoll}`"
+                    v-model="sysRoll"
                     type="number"
                     class="hide-input-spinners ml-n3"
                     style="max-width: 60px; margin-top: -0.5px"

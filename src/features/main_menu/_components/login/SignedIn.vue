@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="!!authedUser && !!authedUser.attributes">
+    <div v-if="!!authedUser && !!authedUser.attributes && userProfile.Username">
       <div v-if="userProfile" class="text-center heading h3 mt-3 mb-2">
         CONNECTED
         <cc-slashes />
@@ -53,9 +53,16 @@
           </p>
         </v-col>
         <v-col cols="auto" class="mr-6">
-          <cc-tooltip content="Manual Sync">
+          <cc-tooltip content="Cloud Save">
             <v-btn fab large elevation="0" color="accent" dark :loading="loading" @click="sync()">
               <v-icon x-large>mdi-cloud-sync-outline</v-icon>
+            </v-btn>
+          </cc-tooltip>
+        </v-col>
+        <v-col cols="auto" class="mr-6">
+          <cc-tooltip content="Cloud Load">
+            <v-btn fab large elevation="0" color="accent" dark :loading="loading" @click="load()">
+              <v-icon x-large>mdi-cloud-download-outline</v-icon>
             </v-btn>
           </cc-tooltip>
         </v-col>
@@ -67,17 +74,17 @@
       </v-row>
       <v-card tile outlined class="my-2">
         <v-toolbar dense flat tile color="light-panel">
-          <div class="heading h3">SYNC FREQUENCY</div>
+          <div class="heading h3">SAVE FREQUENCY</div>
         </v-toolbar>
         <v-row dense align="center" class="pa-2">
           <v-col md="auto" cols="12">
             <v-switch
-              :input-value="isManualOnly"
+              :input-value="isManualSaveOnly"
               hide-details
               color="accent"
               :class="$vuetify.breakpoint.mdAndUp ? 'px-6' : ''"
-              label="Manual Sync Only"
-              @change="setManualOnly($event)"
+              label="Manual Save Only"
+              @change="setManualSaveOnly($event)"
             />
           </v-col>
           <v-divider v-if="$vuetify.breakpoint.mdAndUp" vertical class="mx-3" />
@@ -85,18 +92,10 @@
             <v-row v-if="userProfile" dense>
               <v-col lg="4" cols="6">
                 <v-switch
-                  v-model="userProfile.SyncFrequency.onAppLoad"
+                  v-model="userProfile.SyncFrequency.onBulkDelete"
                   hide-details
                   color="accent"
-                  label="On App Load"
-                />
-              </v-col>
-              <v-col lg="4" cols="6">
-                <v-switch
-                  v-model="userProfile.SyncFrequency.onLogIn"
-                  hide-details
-                  color="accent"
-                  label="On User Sign In"
+                  label="On Bulk Data Overwrite"
                 />
               </v-col>
               <!-- <v-col lg="4" cols="6"><v-switch v-model="userProfile.SyncFrequency.onAppLoad" hide-details color="accent" label="On App Exit" /></v-col> -->
@@ -240,6 +239,49 @@
           <v-btn text color="accent" :loading="loading" @click="sync()">Save</v-btn>
         </v-card-actions>
       </v-card>
+      <v-card tile outlined class="my-2">
+        <v-toolbar dense flat tile color="light-panel">
+          <div class="heading h3">LOAD FREQUENCY</div>
+        </v-toolbar>
+        <v-row dense align="center" class="pa-2">
+          <v-col md="auto" cols="12">
+            <v-switch
+              :input-value="isManualLoadOnly"
+              hide-details
+              color="accent"
+              :class="$vuetify.breakpoint.mdAndUp ? 'px-6' : ''"
+              label="Manual Load Only"
+              @change="setManualLoadOnly($event)"
+            />
+          </v-col>
+          <v-divider v-if="$vuetify.breakpoint.mdAndUp" vertical class="mx-3" />
+          <v-col>
+            <v-row v-if="userProfile" dense>
+              <v-col lg="4" cols="6">
+                <v-switch
+                  v-model="userProfile.SyncFrequency.onAppLoad"
+                  hide-details
+                  color="accent"
+                  label="On App Load"
+                />
+              </v-col>
+              <v-col lg="4" cols="6">
+                <v-switch
+                  v-model="userProfile.SyncFrequency.onLogIn"
+                  hide-details
+                  color="accent"
+                  label="On User Sign In"
+                />
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
+        <v-divider />
+        <v-card-actions>
+          <v-spacer />
+          <v-btn text color="accent" :loading="loading" @click="sync()">Save</v-btn>
+        </v-card-actions>
+      </v-card>
       <!-- <v-card tile outlined class="my-2">
         <v-toolbar dense flat tile color="light-panel">
           <div class="heading h3">SYNC OPTIONS</div>
@@ -363,14 +405,16 @@ export default Vue.extend({
     userProfile() {
       return getModule(UserStore, this.$store).UserProfile
     },
-    isManualOnly() {
-      return !Object.values(this.userProfile.SyncFrequency).some((x: boolean) => x === true)
+    isManualSaveOnly() {
+      return !Object.values(this.userProfile.SaveFrequency).some((x: boolean) => x === true)
+    },
+    isManualLoadOnly() {
+      return !Object.values(this.userProfile.LoadFrequency).some((x: boolean) => x === true)
     },
   },
   mounted() {
     Auth.currentAuthenticatedUser()
       .then(user => {
-        console.log(user)
         this.authedUser = user
       })
       .catch(() => {
@@ -378,16 +422,25 @@ export default Vue.extend({
       })
   },
   methods: {
-    setManualOnly(toggle) {
+    setManualSaveOnly(toggle) {
       if (toggle) {
-        for (const k in this.userProfile.SyncFrequency) {
+        for (const k in this.userProfile.SaveFrequency) {
           if (Object.prototype.hasOwnProperty.call(this.userProfile.SyncFrequency, k)) {
             Vue.set(this.userProfile.SyncFrequency, k, false)
           }
         }
       }
     },
-    sync() {
+    setManualLoadOnly(toggle) {
+      if (toggle) {
+        for (const k in this.userProfile.LoadFrequency) {
+          if (Object.prototype.hasOwnProperty.call(this.userProfile.SyncFrequency, k)) {
+            Vue.set(this.userProfile.SyncFrequency, k, false)
+          }
+        }
+      }
+    },
+    async sync() {
       this.loading = true
       const userstore = getModule(UserStore, this.$store)
       userstore
@@ -397,7 +450,23 @@ export default Vue.extend({
         })
         .then(() => {
           this.loading = false
-          this.$notify('Sync Complete', 'success')
+          this.$notify('Cloud Save Complete', 'success')
+        })
+        .catch(err => {
+          console.error(err)
+          this.loading = false
+        })
+    },
+    async load() {
+      this.loading = true
+      const userstore = getModule(UserStore, this.$store)
+      Auth.currentAuthenticatedUser()
+        .then(user => {
+          userstore.setAws({ user: user })
+        })
+        .then(() => {
+          this.loading = false
+          this.$notify('Cloud Load Complete', 'success')
         })
         .catch(err => {
           console.error(err)

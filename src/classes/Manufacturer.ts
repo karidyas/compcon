@@ -23,7 +23,7 @@ class Manufacturer {
   private _logo_url?: string
 
   public constructor(data: IManufacturerData) {
-    this.ID = data.id
+    this.ID = data.id.toUpperCase()
     this.Name = data.name
     this.Description = data.description
     this.Quote = data.quote
@@ -34,7 +34,7 @@ class Manufacturer {
   }
 
   public get Color(): string {
-    return this.Light
+    return this.Light ? this.Light : 'grey'
   }
 
   public GetColor(dark?: boolean): string {
@@ -47,8 +47,9 @@ class Manufacturer {
 
   public get Logo(): string {
     if (this._logo_url) return this._logo_url
-    else if (this._logo) return getImagePath(ImageTag.Logo, `${this._logo}.svg`)
-    else return '' // TODO: placeholder logo?
+    // else if (this._logo) return getImagePath(ImageTag.Logo, `${this._logo}.svg`)
+    else if (this._logo) return this._logo
+    return '' // TODO: placeholder logo?
   }
 }
 
