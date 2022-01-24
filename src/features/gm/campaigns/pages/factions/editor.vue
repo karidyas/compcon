@@ -1,5 +1,5 @@
 <template>
-  <editor-base :item="faction" :new="id === 'new'" @exit="$router.push('/gm/factions')">
+  <editor-base :item="faction" @exit="$router.push('/gm/factions')">
     <v-row dense align="center">
       <v-col>
         <v-text-field v-model="faction.Name" label="Name" />
@@ -26,32 +26,14 @@
 </template>
 
 <script lang="ts">
-import { Faction } from '@/classes/campaign/Faction'
 import Vue from 'vue'
-import EditorBase from '../_components/EditorBase.vue'
+import EditorBase from '../../../_components/EditorBase.vue'
 
 export default Vue.extend({
   name: 'faction-editor',
   components: { EditorBase },
   props: {
-    id: { type: String, required: true },
-  },
-  data: () => ({
-    faction: null,
-  }),
-  created() {
-    this.mountFaction()
-  },
-  watch: {
-    id() {
-      this.mountFaction()
-    },
-  },
-  methods: {
-    mountFaction() {
-      if (this.id === 'new') this.faction = new Faction()
-      else this.faction = this.$store.getters['factions/getFactions'].find(x => x.ID === this.id)
-    },
+    faction: { type: Object, required: true },
   },
 })
 </script>

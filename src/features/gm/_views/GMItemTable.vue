@@ -1,13 +1,40 @@
 <template>
   <div>
     <v-data-table
+      v-model="selected"
       :items="items"
       :group-by="grouping === 'None' ? [] : grouping"
       :sort-by="sorting"
       :headers="headers"
       :items-per-page="-1"
       hide-default-footer
+      show-select
+      item-key="ID"
     >
+      <template v-slot:[`body.prepend`]>
+        <v-scroll-y-reverse-transition>
+          <v-menu v-if="selected.length" offset-x left bottom>
+            <template v-slot:activator="{ on }">
+              <v-btn icon color="error" class="fadeSelect my-1 mx-2" v-on="on">
+                <v-icon>mdi-delete</v-icon>
+              </v-btn>
+            </template>
+            <v-card>
+              <v-card-text>
+                Do you want to delete the {{ selected.length }} selected items? This action cannot
+                be undone.
+              </v-card-text>
+              <v-divider />
+              <v-card-actions>
+                <v-spacer />
+                <v-btn small color="error" @click="deleteAllSelected()">
+                  Confirm Deletion
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-menu>
+        </v-scroll-y-reverse-transition>
+      </template>
       <template v-slot:[`item.Campaigns`]="{ item }">
         <v-chip
           v-for="c in item.Campaigns"
@@ -33,12 +60,7 @@
         </v-chip>
       </template>
       <template v-slot:[`item.ItemType`]="{ item }">
-        <v-btn
-          small
-          color="primary"
-          class="white--text"
-          :to="`${itemType.toLowerCase()}s/edit/${item.ID}`"
-        >
+        <v-btn small color="primary" class="white--text" @click="$emit('open', item.ID)">
           <v-icon left>mdi-open-in-new</v-icon>
           Open
         </v-btn>
@@ -54,6 +76,9 @@ import * as headers from './_components/gmItemHeaders'
 
 export default Vue.extend({
   name: 'item-card-grid',
+  data: () => ({
+    selected: [],
+  }),
   props: {
     items: { type: Array, required: true },
     itemType: { type: String, required: true },
@@ -78,6 +103,11 @@ export default Vue.extend({
       //   this.sorting,
       //   this.sortDir
       // )
+    },
+    deleteAllSelected() {
+      this.selected.forEach(e => {
+        e.delete()
+      })
     },
   },
 })

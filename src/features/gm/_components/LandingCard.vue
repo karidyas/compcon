@@ -2,7 +2,7 @@
   <v-col :cols="cols">
     <v-hover v-slot="{ hover }" style="cursor: pointer">
       <v-card flat outlined class="mx-auto" :to="to">
-        <v-img :aspect-ratio="ratio" :src="`../../../../static/img/misc/${img}`">
+        <v-img :aspect-ratio="ratio" :src="`../../../../static/img/misc/${img}`" max-height="180px">
           <v-fade-transition>
             <div
               v-if="hover"
