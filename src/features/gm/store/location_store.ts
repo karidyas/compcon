@@ -3,7 +3,6 @@ import _ from 'lodash'
 import { loadData, saveData } from '@/io/Data'
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { Location, ILocationData } from '@/classes/campaign/Location'
-import { store } from '@/store'
 
 export const SAVE_DATA = 'SAVE_DATA'
 export const ADD_LOCATION = 'ADD_LOCATION'
@@ -17,7 +16,6 @@ async function saveLocationData(locations: Location[]) {
 }
 
 @Module({
-  store: store,
   namespaced: true,
 })
 export class LocationStore extends VuexModule {

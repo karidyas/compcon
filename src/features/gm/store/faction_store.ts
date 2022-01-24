@@ -3,7 +3,6 @@ import _ from 'lodash'
 import { loadData, saveData } from '@/io/Data'
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { Faction, IFactionData } from '@/classes/campaign/Faction'
-import { store } from '@/store'
 
 export const SAVE_DATA = 'SAVE_DATA'
 export const ADD_FACTION = 'ADD_FACTION'
@@ -17,7 +16,6 @@ async function saveFactionData(factions: Faction[]) {
 }
 
 @Module({
-  store: store,
   namespaced: true,
 })
 export class FactionStore extends VuexModule {

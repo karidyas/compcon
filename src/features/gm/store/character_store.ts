@@ -3,7 +3,6 @@ import _ from 'lodash'
 import { loadData, saveData } from '@/io/Data'
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { Character, ICharacterData } from '@/classes/campaign/Character'
-import { store } from '@/store'
 
 export const SAVE_DATA = 'SAVE_DATA'
 export const ADD_CHARACTER = 'ADD_CHARACTER'
@@ -17,7 +16,6 @@ async function saveCharacterData(characters: Character[]) {
 }
 
 @Module({
-  store: store,
   namespaced: true,
 })
 export class CharacterStore extends VuexModule {

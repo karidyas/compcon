@@ -1,7 +1,7 @@
 <template>
   <v-hover v-slot="{ hover }" style="cursor: pointer">
     <v-card :elevation="hover ? 12 : 0" :outlined="!hover">
-      <v-img :aspect-ratio="1" src="../../../../static/img/misc/combat.jpg">
+      <v-img :aspect-ratio="1" src="/static/img/misc/combat.jpg">
         <v-fade-transition>
           <div
             v-if="hover"
@@ -17,7 +17,9 @@
         </v-fade-transition>
       </v-img>
       <v-card-text class="py-2 text-center" style="position: relative">
-        <div class="body-text" :class="hover ? 'primary--text' : ''">tier - class</div>
+        <div class="body-text" :class="hover ? 'primary--text' : ''">
+          tier - class
+        </div>
         <div class="heading h2" :class="hover ? 'primary--text' : ''">name</div>
         <div class="body-text" :class="hover ? 'primary--text' : ''">
           template
@@ -30,11 +32,11 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import Vue from "vue";
 export default Vue.extend({
-  name: 'gm-item-card',
+  name: "gm-item-card",
   props: {
     item: { type: Object, required: true },
   },
-})
+});
 </script>
