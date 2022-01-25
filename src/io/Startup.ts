@@ -12,10 +12,6 @@ import {
 import { Auth } from '@aws-amplify/auth'
 import { getModule } from 'vuex-module-decorators'
 
-<<<<<<< HEAD
-
-=======
->>>>>>> dev-backup
 export default async function (lancerVer: string, ccVer: string, store: any, noSync?: boolean): Promise<void> {
   const dataStore = getModule(CompendiumStore, store)
   const userstore = getModule(UserStore, store)

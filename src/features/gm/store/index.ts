@@ -3,7 +3,6 @@ import _ from 'lodash'
 import { loadData, saveData } from '@/io/Data'
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { Campaign, CampaignStatus, ICampaignData } from '@/classes/campaign/Campaign'
-import { store } from '@/store'
 
 export const SAVE_DATA = 'SAVE_DATA'
 export const ADD_CAMPAIGN = 'ADD_CAMPAIGN'
@@ -19,7 +18,6 @@ async function saveCampaignData(campaigns: Campaign[]) {
 }
 
 @Module({
-  store: store,
   namespaced: true,
 })
 export class CampaignStore extends VuexModule {

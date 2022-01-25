@@ -1,7 +1,7 @@
 <template>
   <page-base :item="item">
-    {{ item }}
-    {{ typeof item }}
+    <!-- {{ item }}
+    {{ typeof item }} -->
     <v-divider class="my-2" />
     <v-row>
       <v-col>
@@ -18,14 +18,14 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import PageBase from './_components.vue/PageBase.vue'
+import Vue from "vue";
+import PageBase from "./_components.vue/PageBase.vue";
 
 export default Vue.extend({
-  name: 'campaign-section-page',
+  name: "campaign-section-page",
   components: { PageBase },
   props: {
     item: { type: Object, required: true },
   },
-})
+});
 </script>
